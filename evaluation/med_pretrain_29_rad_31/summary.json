@@ -1,0 +1,14 @@
+{
+  "checkpoint": "./output_v3/rad/med_pretrain_29_rad_31.pth",
+  "dataset": "rad",
+  "overall_accuracy": 74.06,
+  "per_answer_type": {
+    "CLOSED": 84.56,
+    "OPEN": 58.1
+  },
+  "inference_metrics": {
+    "total_time_formatted": "0:00:34",
+    "total_time_seconds": 34.31337356567383,
+    "avg_seconds_per_sample": 0.07608286821657168
+  }
+}

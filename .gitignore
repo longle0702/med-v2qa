@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environment variables - NEVER commit
+.env
+.env.local
+.env.*.local
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# DeepEval cache
+.deepeval/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git LFS (tracked via .gitattributes)
+# *.pth files are tracked via LFS
+# Exception: output checkpoints > 2 GB exceed GitHub LFS limit — host externally
+output/**/*.pth

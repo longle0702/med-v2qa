@@ -1,0 +1,212 @@
+
+Loading dataset: rad
+  train size : 3064
+  test  size : 451
+
+Building model …
+Loading checkpoint: ./output_v3/rad/med_pretrain_29_rad_31.pth
+Missing  keys : []
+Unexpected keys: []
+
+Running inference …
+Generate VQA test result:  [  0/226]  eta: 0:02:51    time: 0.7596  data: 0.1521  max mem: 2781
+Generate VQA test result:  [ 50/226]  eta: 0:00:28    time: 0.1455  data: 0.0002  max mem: 2782
+Generate VQA test result:  [100/226]  eta: 0:00:19    time: 0.1450  data: 0.0002  max mem: 2782
+Generate VQA test result:  [150/226]  eta: 0:00:11    time: 0.1453  data: 0.0002  max mem: 2783
+Generate VQA test result:  [200/226]  eta: 0:00:03    time: 0.1455  data: 0.0002  max mem: 2783
+Generate VQA test result:  [225/226]  eta: 0:00:00    time: 0.1444  data: 0.0001  max mem: 2783
+Generate VQA test result: Total time: 0:00:33 (0.1492 s / it)
+Inference time total : 0:00:33
+Inference speed      : 0.0748 seconds per sample
+
+Raw predictions saved → ./evaluation/med_pretrain_29_rad_31/result/med_pretrain_29_rad_31_vqa_result.json
+
+Evaluating Metrics …
+loading VQA annotations and questions into memory...
+creating index...
+index created!
+Loading and preparing results...     
+DONE (t=0.00s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [--------------------] 0% Finshed Percent: [####----------------] 22% Finshed Percent: [#########-----------] 44% Finshed Percent: [#############-------] 66% Finshed Percent: [##################--] 88% Done computing accuracy
+count_error ==  117
+
+Overall Accuracy : 74.06
+Per Answer Type  :
+  CLOSED : 84.56
+  OPEN : 58.10
+
+Accuracy saved → ./evaluation/med_pretrain_29_rad_31/result/med_pretrain_29_rad_31_vqa_result_acc.json
+Comparison saved → ./evaluation/med_pretrain_29_rad_31/result/med_pretrain_29_rad_31_vqa_result_compare.json
+
+Summary saved → ./evaluation/med_pretrain_29_rad_31/summary.json
+
+===== EVALUATION SUMMARY =====
+  Checkpoint   : ./output_v3/rad/med_pretrain_29_rad_31.pth
+  Overall Acc  : 74.06
+    CLOSED     : 84.56
+    OPEN       : 58.10
+  Total Time   : 0:00:33
+  Speed/Sample : 0.0748s
+==============================
+
+Loading dataset: rad
+  train size : 3064
+  test  size : 451
+
+Building model …
+Loading checkpoint: ./output_v3/rad/med_pretrain_29_rad_31.pth
+Missing  keys : []
+Unexpected keys: []
+
+Running inference …
+Generate VQA test result:  [  0/226]  eta: 0:02:56    time: 0.7819  data: 0.1700  max mem: 2781
+Generate VQA test result:  [ 50/226]  eta: 0:00:28    time: 0.1463  data: 0.0002  max mem: 2782
+Generate VQA test result:  [100/226]  eta: 0:00:19    time: 0.1497  data: 0.0002  max mem: 2782
+Generate VQA test result:  [150/226]  eta: 0:00:11    time: 0.1463  data: 0.0002  max mem: 2783
+Generate VQA test result:  [200/226]  eta: 0:00:03    time: 0.1472  data: 0.0002  max mem: 2783
+Generate VQA test result:  [225/226]  eta: 0:00:00    time: 0.1450  data: 0.0002  max mem: 2783
+Generate VQA test result: Total time: 0:00:34 (0.1512 s / it)
+Inference time total : 0:00:34
+Inference speed      : 0.0758 seconds per sample
+
+Raw predictions saved → ./evaluation/med_pretrain_29_rad_31/result/med_pretrain_29_rad_31_vqa_result.json
+
+Evaluating Metrics …
+loading VQA annotations and questions into memory...
+creating index...
+index created!
+Loading and preparing results...     
+DONE (t=0.00s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [--------------------] 0% Finshed Percent: [####----------------] 22% Finshed Percent: [#########-----------] 44% Finshed Percent: [#############-------] 66% Finshed Percent: [##################--] 88% Done computing accuracy
+count_error ==  117
+
+Overall Accuracy : 74.06
+Per Answer Type  :
+  CLOSED : 84.56
+  OPEN : 58.10
+
+Accuracy saved → ./evaluation/med_pretrain_29_rad_31/result/med_pretrain_29_rad_31_vqa_result_acc.json
+Comparison saved → ./evaluation/med_pretrain_29_rad_31/result/med_pretrain_29_rad_31_vqa_result_compare.json
+
+Summary saved → ./evaluation/med_pretrain_29_rad_31/summary.json
+
+===== EVALUATION SUMMARY =====
+  Checkpoint   : ./output_v3/rad/med_pretrain_29_rad_31.pth
+  Overall Acc  : 74.06
+    CLOSED     : 84.56
+    OPEN       : 58.10
+  Total Time   : 0:00:34
+  Speed/Sample : 0.0758s
+==============================
+
+Loading dataset: rad
+  train size : 3064
+  test  size : 451
+
+Building model …
+Loading checkpoint: ./output_v3/rad/med_pretrain_29_rad_31.pth
+Missing  keys : []
+Unexpected keys: []
+
+Running inference …
+Generate VQA test result:  [  0/226]  eta: 0:03:01    time: 0.8041  data: 0.1661  max mem: 2781
+Generate VQA test result:  [ 50/226]  eta: 0:00:28    time: 0.1483  data: 0.0001  max mem: 2782
+Generate VQA test result:  [100/226]  eta: 0:00:19    time: 0.1479  data: 0.0001  max mem: 2782
+Generate VQA test result:  [150/226]  eta: 0:00:11    time: 0.1512  data: 0.0002  max mem: 2783
+Generate VQA test result:  [200/226]  eta: 0:00:03    time: 0.1483  data: 0.0001  max mem: 2783
+Generate VQA test result:  [225/226]  eta: 0:00:00    time: 0.1470  data: 0.0001  max mem: 2783
+Generate VQA test result: Total time: 0:00:34 (0.1524 s / it)
+Inference time total : 0:00:34
+Inference speed      : 0.0764 seconds per sample
+
+Raw predictions saved → ./evaluation/med_pretrain_29_rad_31/result/med_pretrain_29_rad_31_vqa_result.json
+
+Evaluating Metrics …
+loading VQA annotations and questions into memory...
+creating index...
+index created!
+Loading and preparing results...     
+DONE (t=0.00s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [--------------------] 0% Finshed Percent: [####----------------] 22% Finshed Percent: [#########-----------] 44% Finshed Percent: [#############-------] 66% Finshed Percent: [##################--] 88% Done computing accuracy
+count_error ==  117
+
+Overall Accuracy : 74.06
+Per Answer Type  :
+  CLOSED : 84.56
+  OPEN : 58.10
+
+Accuracy saved → ./evaluation/med_pretrain_29_rad_31/result/med_pretrain_29_rad_31_vqa_result_acc.json
+Comparison saved → ./evaluation/med_pretrain_29_rad_31/result/med_pretrain_29_rad_31_vqa_result_compare.json
+
+Summary saved → ./evaluation/med_pretrain_29_rad_31/summary.json
+
+===== EVALUATION SUMMARY =====
+  Checkpoint   : ./output_v3/rad/med_pretrain_29_rad_31.pth
+  Overall Acc  : 74.06
+    CLOSED     : 84.56
+    OPEN       : 58.10
+  Total Time   : 0:00:34
+  Speed/Sample : 0.0764s
+==============================
+
+Loading dataset: rad
+  train size : 3064
+  test  size : 451
+
+Building model …
+Loading checkpoint: ./output_v3/rad/med_pretrain_29_rad_31.pth
+Missing  keys : []
+Unexpected keys: []
+
+Running inference …
+Generate VQA test result:  [  0/226]  eta: 0:02:54    time: 0.7727  data: 0.1711  max mem: 2781
+Generate VQA test result:  [ 50/226]  eta: 0:00:28    time: 0.1491  data: 0.0002  max mem: 2782
+Generate VQA test result:  [100/226]  eta: 0:00:19    time: 0.1484  data: 0.0001  max mem: 2782
+Generate VQA test result:  [150/226]  eta: 0:00:11    time: 0.1479  data: 0.0001  max mem: 2783
+Generate VQA test result:  [200/226]  eta: 0:00:03    time: 0.1478  data: 0.0001  max mem: 2783
+Generate VQA test result:  [225/226]  eta: 0:00:00    time: 0.1464  data: 0.0001  max mem: 2783
+Generate VQA test result: Total time: 0:00:34 (0.1518 s / it)
+Inference time total : 0:00:34
+Inference speed      : 0.0761 seconds per sample
+
+Raw predictions saved → ./evaluation/med_pretrain_29_rad_31/result/med_pretrain_29_rad_31_vqa_result.json
+
+Evaluating Metrics …
+loading VQA annotations and questions into memory...
+creating index...
+index created!
+Loading and preparing results...     
+DONE (t=0.00s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [--------------------] 0% Finshed Percent: [####----------------] 22% Finshed Percent: [#########-----------] 44% Finshed Percent: [#############-------] 66% Finshed Percent: [##################--] 88% Done computing accuracy
+count_error ==  117
+
+Overall Accuracy : 74.06
+Per Answer Type  :
+  CLOSED : 84.56
+  OPEN : 58.10
+
+Accuracy saved → ./evaluation/med_pretrain_29_rad_31/result/med_pretrain_29_rad_31_vqa_result_acc.json
+Comparison saved → ./evaluation/med_pretrain_29_rad_31/result/med_pretrain_29_rad_31_vqa_result_compare.json
+
+Summary saved → ./evaluation/med_pretrain_29_rad_31/summary.json
+
+===== EVALUATION SUMMARY =====
+  Checkpoint   : ./output_v3/rad/med_pretrain_29_rad_31.pth
+  Overall Acc  : 74.06
+    CLOSED     : 84.56
+    OPEN       : 58.10
+  Total Time   : 0:00:34
+  Speed/Sample : 0.0761s
+==============================

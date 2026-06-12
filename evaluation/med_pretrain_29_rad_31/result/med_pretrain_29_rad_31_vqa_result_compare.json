@@ -1,0 +1,2257 @@
+{
+  "11": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "13": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "14": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "20": {
+    "type": "open",
+    "gt": "posterior anterior",
+    "pred": "pa"
+  },
+  "22": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "24": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "32": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "34": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "36": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "38": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "40": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "42": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "46": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "47": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "49": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "86": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "87": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "121": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "123": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "158": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "160": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "162": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "164": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "178": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "180": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "186": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "188": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "198": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "200": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "222": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "224": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "239": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "241": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "269": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "271": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "275": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "277": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "298": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "300": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "302": {
+    "type": "open",
+    "gt": "pulmonary nodules",
+    "pred": "pulmonary nodules"
+  },
+  "304": {
+    "type": "open",
+    "gt": "pulmonary nodules",
+    "pred": "pulmonary nodules"
+  },
+  "306": {
+    "type": "open",
+    "gt": "free air",
+    "pred": "free air"
+  },
+  "308": {
+    "type": "open",
+    "gt": "free air",
+    "pred": "free air"
+  },
+  "310": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "319": {
+    "type": "open",
+    "gt": "hypodense lesion",
+    "pred": "hypodense lesion"
+  },
+  "321": {
+    "type": "open",
+    "gt": "hypodense lesion",
+    "pred": "hypodense"
+  },
+  "335": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "393": {
+    "type": "open",
+    "gt": "pa",
+    "pred": "pa"
+  },
+  "401": {
+    "type": "close",
+    "gt": "1",
+    "pred": "asymmetric"
+  },
+  "402": {
+    "type": "open",
+    "gt": "1",
+    "pred": "2"
+  },
+  "413": {
+    "type": "open",
+    "gt": "enlarged",
+    "pred": "fatty infiltration"
+  },
+  "414": {
+    "type": "open",
+    "gt": "enlarged",
+    "pred": "ureteral obstruction"
+  },
+  "415": {
+    "type": "open",
+    "gt": "nodular opacities",
+    "pred": "nodular opacities"
+  },
+  "417": {
+    "type": "open",
+    "gt": "nodular opacities",
+    "pred": "nodular opacities"
+  },
+  "423": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "425": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "427": {
+    "type": "open",
+    "gt": "ring enhancing lesions",
+    "pred": "ring enhancing lesions"
+  },
+  "429": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "431": {
+    "type": "open",
+    "gt": "right temporal lobe",
+    "pred": "right temporal lobe"
+  },
+  "433": {
+    "type": "open",
+    "gt": "right temporal lobe",
+    "pred": "right temporal lobe"
+  },
+  "458": {
+    "type": "open",
+    "gt": "middle mogul",
+    "pred": "middle mogul"
+  },
+  "460": {
+    "type": "open",
+    "gt": "middle mogul",
+    "pred": "middle mogul"
+  },
+  "462": {
+    "type": "open",
+    "gt": "middle mogul",
+    "pred": "middle mogul"
+  },
+  "470": {
+    "type": "open",
+    "gt": "right lung",
+    "pred": "right lung"
+  },
+  "472": {
+    "type": "open",
+    "gt": "right lung",
+    "pred": "right lung"
+  },
+  "475": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "485": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "487": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "493": {
+    "type": "close",
+    "gt": "no",
+    "pred": "yes"
+  },
+  "495": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "503": {
+    "type": "open",
+    "gt": "xray",
+    "pred": "chest xray"
+  },
+  "513": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "522": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "524": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "531": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "532": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "557": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "571": {
+    "type": "open",
+    "gt": "1",
+    "pred": "small bowel"
+  },
+  "573": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "595": {
+    "type": "open",
+    "gt": "left",
+    "pred": "left"
+  },
+  "596": {
+    "type": "open",
+    "gt": "left",
+    "pred": "right lung"
+  },
+  "598": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "600": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "606": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "608": {
+    "type": "open",
+    "gt": "it is less than half width of thorax",
+    "pred": "it is shifted to right"
+  },
+  "610": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "612": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "629": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "630": {
+    "type": "open",
+    "gt": "blood vessel",
+    "pred": "gallbladder"
+  },
+  "631": {
+    "type": "open",
+    "gt": "above clavicles bilaterally",
+    "pred": "above"
+  },
+  "633": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "648": {
+    "type": "open",
+    "gt": "posterior to appendix",
+    "pred": "posteriorly"
+  },
+  "650": {
+    "type": "open",
+    "gt": "psoas muscle",
+    "pred": "cecum"
+  },
+  "663": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "709": {
+    "type": "open",
+    "gt": "on right shoulder",
+    "pred": "on right shoulder"
+  },
+  "711": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "713": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "718": {
+    "type": "open",
+    "gt": "bullous lesion",
+    "pred": "left apical pneumothorax"
+  },
+  "720": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "722": {
+    "type": "open",
+    "gt": "anterior mediastinum",
+    "pred": "anterior mediastinum"
+  },
+  "724": {
+    "type": "open",
+    "gt": "right",
+    "pred": "right"
+  },
+  "726": {
+    "type": "open",
+    "gt": "not seen here",
+    "pred": "not seen here"
+  },
+  "728": {
+    "type": "close",
+    "gt": "no",
+    "pred": "yes"
+  },
+  "733": {
+    "type": "close",
+    "gt": "left",
+    "pred": "left side"
+  },
+  "734": {
+    "type": "open",
+    "gt": "left",
+    "pred": "right side"
+  },
+  "735": {
+    "type": "close",
+    "gt": "smaller",
+    "pred": "pa"
+  },
+  "750": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "751": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "754": {
+    "type": "open",
+    "gt": "skull cartilage and medulla",
+    "pred": "brain"
+  },
+  "756": {
+    "type": "open",
+    "gt": "right bronchus",
+    "pred": "sternotomy wires and surgical clips"
+  },
+  "759": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "763": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "773": {
+    "type": "open",
+    "gt": "plain film xray",
+    "pred": "chest xray"
+  },
+  "780": {
+    "type": "open",
+    "gt": "small intestines",
+    "pred": "splenule"
+  },
+  "787": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "790": {
+    "type": "close",
+    "gt": "no",
+    "pred": "yes"
+  },
+  "795": {
+    "type": "open",
+    "gt": "diaphragm",
+    "pred": "ascites"
+  },
+  "797": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "809": {
+    "type": "open",
+    "gt": "axial",
+    "pred": "axial"
+  },
+  "811": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "813": {
+    "type": "open",
+    "gt": "ct with contrast",
+    "pred": "ct"
+  },
+  "814": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "821": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "830": {
+    "type": "open",
+    "gt": "lateral ventricles",
+    "pred": "lateral ventricles"
+  },
+  "832": {
+    "type": "open",
+    "gt": "lateral ventricles",
+    "pred": "lateral ventricles"
+  },
+  "840": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "842": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "844": {
+    "type": "close",
+    "gt": "supratentorial",
+    "pred": "irregular"
+  },
+  "874": {
+    "type": "close",
+    "gt": "no",
+    "pred": "yes"
+  },
+  "900": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "906": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "908": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "910": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "912": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "918": {
+    "type": "open",
+    "gt": "fat",
+    "pred": "fat"
+  },
+  "920": {
+    "type": "open",
+    "gt": "fat",
+    "pred": "psoas muscles"
+  },
+  "925": {
+    "type": "close",
+    "gt": "no",
+    "pred": "yes"
+  },
+  "926": {
+    "type": "close",
+    "gt": "no",
+    "pred": "yes"
+  },
+  "946": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "948": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "950": {
+    "type": "close",
+    "gt": "no",
+    "pred": "yes"
+  },
+  "951": {
+    "type": "close",
+    "gt": "no",
+    "pred": "yes"
+  },
+  "977": {
+    "type": "open",
+    "gt": "mid left subclavian vein",
+    "pred": "right superior cavoatrial junction"
+  },
+  "978": {
+    "type": "open",
+    "gt": "mid left subclavian vein",
+    "pred": "right superior cavoatrial junction"
+  },
+  "979": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "981": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "983": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "985": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "989": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "991": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1007": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1009": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1011": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1013": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1035": {
+    "type": "open",
+    "gt": "t2 mri",
+    "pred": "with contrast"
+  },
+  "1046": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1048": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1050": {
+    "type": "open",
+    "gt": "cardiomegaly with pulmonary edema",
+    "pred": "cardiomegaly with pulmonary edema"
+  },
+  "1052": {
+    "type": "open",
+    "gt": "cardiomegaly with pulmonary edema",
+    "pred": "cardiomegaly with pulmonary edema"
+  },
+  "1078": {
+    "type": "open",
+    "gt": "pulmonary lymphatic",
+    "pred": "cardiopulmonary"
+  },
+  "1080": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1082": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1108": {
+    "type": "open",
+    "gt": "right upper lobe",
+    "pred": "right upper lobe"
+  },
+  "1110": {
+    "type": "open",
+    "gt": "right upper lobe",
+    "pred": "right upper lobe"
+  },
+  "1116": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1118": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1132": {
+    "type": "open",
+    "gt": "coronal",
+    "pred": "pa"
+  },
+  "1175": {
+    "type": "open",
+    "gt": "head of pancreas",
+    "pred": "head of pancreas"
+  },
+  "1177": {
+    "type": "open",
+    "gt": "head of pancreas",
+    "pred": "head of pancreas"
+  },
+  "1185": {
+    "type": "open",
+    "gt": "pancreatic head",
+    "pred": "left kidney"
+  },
+  "1187": {
+    "type": "open",
+    "gt": "t2 weighted mri",
+    "pred": "t2 weighted"
+  },
+  "1192": {
+    "type": "open",
+    "gt": "base of cecum",
+    "pred": "stomach"
+  },
+  "1205": {
+    "type": "open",
+    "gt": "right frontal lobe",
+    "pred": "right frontal lobe"
+  },
+  "1209": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1210": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1236": {
+    "type": "open",
+    "gt": "axial plane",
+    "pred": "axial"
+  },
+  "1238": {
+    "type": "close",
+    "gt": "mri",
+    "pred": "ct"
+  },
+  "1259": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1264": {
+    "type": "open",
+    "gt": "3rd ventricle and lateral ventricles",
+    "pred": "aorta"
+  },
+  "1265": {
+    "type": "open",
+    "gt": "abdomen",
+    "pred": "abdomen"
+  },
+  "1266": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1267": {
+    "type": "open",
+    "gt": "regression of left frontal mass",
+    "pred": "right lateral ventricle"
+  },
+  "1268": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1273": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1280": {
+    "type": "open",
+    "gt": "right",
+    "pred": "right"
+  },
+  "1282": {
+    "type": "open",
+    "gt": "right",
+    "pred": "right"
+  },
+  "1284": {
+    "type": "open",
+    "gt": "ivc",
+    "pred": "left kidney"
+  },
+  "1286": {
+    "type": "open",
+    "gt": "ivc",
+    "pred": "ivc"
+  },
+  "1307": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1309": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1311": {
+    "type": "close",
+    "gt": "left",
+    "pred": "left"
+  },
+  "1312": {
+    "type": "open",
+    "gt": "left",
+    "pred": "left"
+  },
+  "1330": {
+    "type": "open",
+    "gt": "axial",
+    "pred": "axial"
+  },
+  "1348": {
+    "type": "open",
+    "gt": "right side",
+    "pred": "right side"
+  },
+  "1350": {
+    "type": "open",
+    "gt": "right side",
+    "pred": "right side"
+  },
+  "1375": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1377": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1379": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1384": {
+    "type": "open",
+    "gt": "r frontal lobe",
+    "pred": "r frontal lobe"
+  },
+  "1386": {
+    "type": "open",
+    "gt": "r frontal lobe",
+    "pred": "r frontal lobe"
+  },
+  "1393": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1395": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1409": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1419": {
+    "type": "open",
+    "gt": "coronal plane",
+    "pred": "contrast"
+  },
+  "1456": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1461": {
+    "type": "open",
+    "gt": "mri t2 weighted",
+    "pred": "mri diffusion weighted"
+  },
+  "1466": {
+    "type": "open",
+    "gt": "axial",
+    "pred": "axial"
+  },
+  "1467": {
+    "type": "open",
+    "gt": "axial",
+    "pred": "axial"
+  },
+  "1476": {
+    "type": "open",
+    "gt": "right lower lateral lung field",
+    "pred": "right lower lateral lung field"
+  },
+  "1478": {
+    "type": "open",
+    "gt": "right lower lateral lung field",
+    "pred": "right lower lateral lung field"
+  },
+  "1480": {
+    "type": "open",
+    "gt": "34 cm",
+    "pred": "5 cm"
+  },
+  "1482": {
+    "type": "open",
+    "gt": "34 cm",
+    "pred": "no"
+  },
+  "1492": {
+    "type": "close",
+    "gt": "female",
+    "pred": "female"
+  },
+  "1493": {
+    "type": "open",
+    "gt": "female",
+    "pred": "female"
+  },
+  "1500": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1502": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1506": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1507": {
+    "type": "open",
+    "gt": "brain",
+    "pred": "chest"
+  },
+  "1512": {
+    "type": "open",
+    "gt": "left thalamus and basal ganglia",
+    "pred": "left thalamus and basal ganglia"
+  },
+  "1514": {
+    "type": "open",
+    "gt": "left thalamus and basal ganglia",
+    "pred": "left thalamus and basal ganglia"
+  },
+  "1529": {
+    "type": "open",
+    "gt": "basilar artery",
+    "pred": "basilar artery"
+  },
+  "1531": {
+    "type": "open",
+    "gt": "basilar artery",
+    "pred": "right temporal lobe"
+  },
+  "1540": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1542": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1548": {
+    "type": "close",
+    "gt": "no",
+    "pred": "yes"
+  },
+  "1549": {
+    "type": "open",
+    "gt": "right hemisphere",
+    "pred": "right hemisphere"
+  },
+  "1551": {
+    "type": "open",
+    "gt": "right hemisphere",
+    "pred": "right hemisphere"
+  },
+  "1578": {
+    "type": "open",
+    "gt": "right cerebellopontine angle",
+    "pred": "right cerebellopontine angle"
+  },
+  "1580": {
+    "type": "open",
+    "gt": "right cerebellopontine angle",
+    "pred": "right cerebellopontine angle"
+  },
+  "1602": {
+    "type": "open",
+    "gt": "adipose tissue",
+    "pred": "ascending colon"
+  },
+  "1603": {
+    "type": "open",
+    "gt": "adipose tissue",
+    "pred": "ascending colon"
+  },
+  "1614": {
+    "type": "open",
+    "gt": "csf",
+    "pred": "white matter"
+  },
+  "1615": {
+    "type": "open",
+    "gt": "csf",
+    "pred": "mediport"
+  },
+  "1616": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1618": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1622": {
+    "type": "open",
+    "gt": "hydrocephalus",
+    "pred": "hydrocephalus"
+  },
+  "1624": {
+    "type": "open",
+    "gt": "hydrocephalus",
+    "pred": "hydrocephalus"
+  },
+  "1626": {
+    "type": "open",
+    "gt": "brain",
+    "pred": "brain"
+  },
+  "1627": {
+    "type": "open",
+    "gt": "ct",
+    "pred": "with contrast"
+  },
+  "1628": {
+    "type": "open",
+    "gt": "ct",
+    "pred": "ct"
+  },
+  "1630": {
+    "type": "open",
+    "gt": "right upper lobe",
+    "pred": "right upper lobe"
+  },
+  "1632": {
+    "type": "open",
+    "gt": "right upper lobe",
+    "pred": "right upper lobe"
+  },
+  "1651": {
+    "type": "open",
+    "gt": "xray",
+    "pred": "xray"
+  },
+  "1652": {
+    "type": "open",
+    "gt": "right posteroinferior cerebellum",
+    "pred": "right posteroinferior cerebellum"
+  },
+  "1654": {
+    "type": "open",
+    "gt": "bleeding in right posteroinferior cerebellum",
+    "pred": "pneumothorax"
+  },
+  "1678": {
+    "type": "close",
+    "gt": "no",
+    "pred": "yes"
+  },
+  "1680": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1686": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1688": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1690": {
+    "type": "open",
+    "gt": "supine see air fluid level",
+    "pred": "l2"
+  },
+  "1701": {
+    "type": "open",
+    "gt": "gallbladder",
+    "pred": "gallbladder"
+  },
+  "1703": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "1721": {
+    "type": "close",
+    "gt": "female",
+    "pred": "female"
+  },
+  "1722": {
+    "type": "open",
+    "gt": "female",
+    "pred": "man"
+  },
+  "1736": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1738": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1753": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1755": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1758": {
+    "type": "open",
+    "gt": "liver",
+    "pred": "stomach bubble"
+  },
+  "1768": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "1781": {
+    "type": "close",
+    "gt": "no",
+    "pred": "hyperintense"
+  },
+  "1783": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1810": {
+    "type": "open",
+    "gt": "maxillary sinuses",
+    "pred": "maxillary sinuses"
+  },
+  "1812": {
+    "type": "open",
+    "gt": "maxillary sinuses",
+    "pred": "maxillary sinuses"
+  },
+  "1814": {
+    "type": "open",
+    "gt": "lying supine with their feet towards screen",
+    "pred": "axial"
+  },
+  "1850": {
+    "type": "close",
+    "gt": "no",
+    "pred": "yes"
+  },
+  "1851": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1853": {
+    "type": "open",
+    "gt": "sacroiliac joint",
+    "pred": "sacroiliac joint"
+  },
+  "1867": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "1872": {
+    "type": "close",
+    "gt": "right",
+    "pred": "right"
+  },
+  "1874": {
+    "type": "open",
+    "gt": "right",
+    "pred": "right"
+  },
+  "1884": {
+    "type": "open",
+    "gt": "ribs",
+    "pred": "ribs"
+  },
+  "1886": {
+    "type": "open",
+    "gt": "ribs",
+    "pred": "ribs"
+  },
+  "1888": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1890": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1892": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1894": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1908": {
+    "type": "open",
+    "gt": "right vs left sided pathology",
+    "pred": "pa"
+  },
+  "1910": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1912": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1930": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1932": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1943": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1945": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1951": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "1968": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "1982": {
+    "type": "open",
+    "gt": "axial",
+    "pred": "axial"
+  },
+  "1996": {
+    "type": "open",
+    "gt": "intestines",
+    "pred": "abdominal pain"
+  },
+  "2001": {
+    "type": "open",
+    "gt": "lateral and third ventricular hydrocephalus",
+    "pred": "lateral and third ventricular hydrocephalus"
+  },
+  "2003": {
+    "type": "open",
+    "gt": "lateral and third ventricular hydrocephalus",
+    "pred": "lateral and third ventricular hydrocephalus"
+  },
+  "2005": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2007": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2035": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2037": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2043": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2045": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2082": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2084": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2094": {
+    "type": "open",
+    "gt": "diverticulitis",
+    "pred": "diverticulitis"
+  },
+  "2096": {
+    "type": "open",
+    "gt": "diverticulitis",
+    "pred": "diverticulitis"
+  },
+  "2121": {
+    "type": "open",
+    "gt": "axial",
+    "pred": "axial"
+  },
+  "2135": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2137": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2143": {
+    "type": "open",
+    "gt": "gallstones",
+    "pred": "pericholecystic fluid"
+  },
+  "2144": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2158": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2160": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2166": {
+    "type": "open",
+    "gt": "left aca and mca",
+    "pred": "left aca and mca"
+  },
+  "2168": {
+    "type": "open",
+    "gt": "left aca and mca",
+    "pred": "left aca and mca"
+  },
+  "2185": {
+    "type": "open",
+    "gt": "brain",
+    "pred": "brain"
+  },
+  "2187": {
+    "type": "open",
+    "gt": "caudate putamen left parietal",
+    "pred": "caudate putamen left parietal"
+  },
+  "2203": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2205": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2223": {
+    "type": "open",
+    "gt": "brain",
+    "pred": "brain"
+  },
+  "2224": {
+    "type": "open",
+    "gt": "brain",
+    "pred": "brain"
+  },
+  "2226": {
+    "type": "open",
+    "gt": "kidney cyst",
+    "pred": "kidney cyst"
+  },
+  "2228": {
+    "type": "open",
+    "gt": "kidney cyst",
+    "pred": "kidney cyst"
+  },
+  "2254": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2256": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2257": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2259": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2261": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2263": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2268": {
+    "type": "open",
+    "gt": "axial",
+    "pred": "mri"
+  },
+  "2269": {
+    "type": "open",
+    "gt": "axial",
+    "pred": "axial"
+  },
+  "2310": {
+    "type": "open",
+    "gt": "diaphragm",
+    "pred": "nipple location"
+  },
+  "2311": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2313": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2318": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2320": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2328": {
+    "type": "open",
+    "gt": "chest",
+    "pred": "cardiomegaly"
+  },
+  "2333": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2335": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2349": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2352": {
+    "type": "open",
+    "gt": "4th ventricle",
+    "pred": "4th ventricle"
+  },
+  "2369": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2371": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "2372": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2377": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2381": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2383": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2391": {
+    "type": "open",
+    "gt": "xr",
+    "pred": "pa xray"
+  },
+  "2406": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2408": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2413": {
+    "type": "open",
+    "gt": "upper left",
+    "pred": "right lung"
+  },
+  "2417": {
+    "type": "open",
+    "gt": "mucosal hyperemia",
+    "pred": "air"
+  },
+  "2420": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2425": {
+    "type": "open",
+    "gt": "ascending colon",
+    "pred": "ascending colon"
+  },
+  "2428": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "infarct"
+  },
+  "2430": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2448": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2452": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2458": {
+    "type": "open",
+    "gt": "right",
+    "pred": "blind loop syndrome"
+  },
+  "2465": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2475": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2479": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "2481": {
+    "type": "open",
+    "gt": "mediport",
+    "pred": "no"
+  },
+  "2509": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2515": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2520": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2524": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2538": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2545": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2546": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2552": {
+    "type": "open",
+    "gt": "anterior mediastinum",
+    "pred": "anterior mediastinum"
+  },
+  "2554": {
+    "type": "close",
+    "gt": "cystic",
+    "pred": "cystic"
+  },
+  "2563": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2568": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2581": {
+    "type": "open",
+    "gt": "5mm",
+    "pred": "5mm"
+  },
+  "2586": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2592": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2594": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2596": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2598": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2600": {
+    "type": "open",
+    "gt": "axial",
+    "pred": "axial"
+  },
+  "2603": {
+    "type": "open",
+    "gt": "plain film",
+    "pred": "pa xray"
+  },
+  "2607": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2611": {
+    "type": "close",
+    "gt": "abnormal",
+    "pred": "hypodense"
+  },
+  "2617": {
+    "type": "open",
+    "gt": "mri",
+    "pred": "mr flair"
+  },
+  "2623": {
+    "type": "open",
+    "gt": "frontal and occipital",
+    "pred": "frontal and occipital"
+  },
+  "2627": {
+    "type": "open",
+    "gt": "basal ganglia cerebellum cerebral cortex",
+    "pred": "basal ganglia cerebellum cerebral cortex"
+  },
+  "2632": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2642": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2650": {
+    "type": "open",
+    "gt": "early hemorrhage",
+    "pred": "posterior fossa"
+  },
+  "2651": {
+    "type": "open",
+    "gt": "on patients left",
+    "pred": "yes"
+  },
+  "2652": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "no"
+  },
+  "2660": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2662": {
+    "type": "open",
+    "gt": "bilateral lungs",
+    "pred": "bilateral"
+  },
+  "2682": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2691": {
+    "type": "open",
+    "gt": "dwi diffusion weighted",
+    "pred": "dwi"
+  },
+  "2702": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2710": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2714": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2716": {
+    "type": "open",
+    "gt": "ct",
+    "pred": "ct"
+  },
+  "2721": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2724": {
+    "type": "close",
+    "gt": "no",
+    "pred": "yes"
+  },
+  "2726": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2731": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2735": {
+    "type": "close",
+    "gt": "right side",
+    "pred": "right side"
+  },
+  "2741": {
+    "type": "open",
+    "gt": "right of midline superior to right hilum",
+    "pred": "right upper lobe"
+  },
+  "2745": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2752": {
+    "type": "open",
+    "gt": "25cm x 17cm x 16cm",
+    "pred": "suprasellar"
+  },
+  "2770": {
+    "type": "close",
+    "gt": "both",
+    "pred": "right side"
+  },
+  "2771": {
+    "type": "close",
+    "gt": "bilateral",
+    "pred": "bilateral"
+  },
+  "2788": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2790": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2817": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2818": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2821": {
+    "type": "open",
+    "gt": "stomach",
+    "pred": "stomach"
+  },
+  "2823": {
+    "type": "open",
+    "gt": "stomach",
+    "pred": "stomach"
+  },
+  "2834": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2837": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2839": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2845": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "2878": {
+    "type": "open",
+    "gt": "motion",
+    "pred": "motion"
+  },
+  "2880": {
+    "type": "open",
+    "gt": "motion",
+    "pred": "motion"
+  },
+  "2902": {
+    "type": "close",
+    "gt": "axial",
+    "pred": "pa"
+  },
+  "2903": {
+    "type": "open",
+    "gt": "axial",
+    "pred": "axial"
+  },
+  "2904": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2905": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2938": {
+    "type": "close",
+    "gt": "flair",
+    "pred": "flair"
+  },
+  "2939": {
+    "type": "open",
+    "gt": "mr flair",
+    "pred": "xray"
+  },
+  "2940": {
+    "type": "open",
+    "gt": "calcified atherosclerosis",
+    "pred": "calcified atherosclerosis"
+  },
+  "2942": {
+    "type": "open",
+    "gt": "calcified atherosclerosis",
+    "pred": "calcified atherosclerosis"
+  },
+  "2949": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2951": {
+    "type": "close",
+    "gt": "hyperinflation",
+    "pred": "bilateral"
+  },
+  "2952": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2954": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "2957": {
+    "type": "close",
+    "gt": "abnormal",
+    "pred": "normal"
+  },
+  "2958": {
+    "type": "close",
+    "gt": "abnormal",
+    "pred": "calcifications"
+  },
+  "2970": {
+    "type": "open",
+    "gt": "t2 weighted",
+    "pred": "t2 weighted"
+  },
+  "2987": {
+    "type": "open",
+    "gt": "soft tissue mass in region of terminal ileum with mesenteric lymphadenopathy",
+    "pred": "blind loop syndrome"
+  },
+  "2989": {
+    "type": "open",
+    "gt": "soft tissue mass in region of terminal ileum with mesenteric lymphadenopathy",
+    "pred": "oral and iv"
+  },
+  "3001": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "3003": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "3015": {
+    "type": "open",
+    "gt": "cavum vergae",
+    "pred": "cavum vergae"
+  },
+  "3017": {
+    "type": "open",
+    "gt": "cavum vergae",
+    "pred": "cavum vergae"
+  },
+  "3026": {
+    "type": "close",
+    "gt": "mri",
+    "pred": "ct"
+  },
+  "3027": {
+    "type": "close",
+    "gt": "mri",
+    "pred": "t2 weighted"
+  },
+  "3030": {
+    "type": "open",
+    "gt": "axial",
+    "pred": "axial"
+  },
+  "3055": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "3057": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "3059": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "3061": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "3063": {
+    "type": "open",
+    "gt": "appendicitis",
+    "pred": "appendix"
+  },
+  "3064": {
+    "type": "open",
+    "gt": "appendicitis",
+    "pred": "appendix"
+  },
+  "3084": {
+    "type": "open",
+    "gt": "proximal aspect of appendix",
+    "pred": "proximal aspect of appendix"
+  },
+  "3086": {
+    "type": "open",
+    "gt": "proximal aspect of appendix",
+    "pred": "4"
+  },
+  "3132": {
+    "type": "close",
+    "gt": "yes",
+    "pred": "yes"
+  },
+  "3136": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  },
+  "3138": {
+    "type": "close",
+    "gt": "no",
+    "pred": "no"
+  }
+}

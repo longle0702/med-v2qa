@@ -1,0 +1,52 @@
+[
+  {
+    "qid": 20,
+    "image_name": "synpic29265.jpg",
+    "image_organ": "CHEST",
+    "answer": "Posterior-Anterior",
+    "answer_type": "OPEN",
+    "question_type": "OTHER",
+    "question": "How is the patient oriented?",
+    "phrase_type": "freeform"
+  },
+  {
+    "qid": 302,
+    "image_name": "synpic18319.jpg",
+    "image_organ": "CHEST",
+    "answer": "Pulmonary nodules",
+    "answer_type": "OPEN",
+    "question_type": "ABN",
+    "question": "Describe the lung abnormalities?",
+    "phrase_type": "para"
+  },
+  {
+    "qid": 304,
+    "image_name": "synpic18319.jpg",
+    "image_organ": "CHEST",
+    "answer": "Pulmonary nodules",
+    "answer_type": "OPEN",
+    "question_type": "ABN",
+    "question": "What abnormalities are seen within the lungs?",
+    "phrase_type": "freeform"
+  },
+  {
+    "qid": 306,
+    "image_name": "synpic32933.jpg",
+    "image_organ": "CHEST",
+    "answer": "Free air",
+    "answer_type": "OPEN",
+    "question_type": "PRES",
+    "question": "What is under the right hemidiaphragm?",
+    "phrase_type": "freeform"
+  },
+  {
+    "qid": 308,
+    "image_name": "synpic32933.jpg",
+    "image_organ": "CHEST",
+    "answer": "Free air",
+    "answer_type": "OPEN",
+    "question_type": "PRES",
+    "question": "What is the abnormality by the right hemidiaphragm?",
+    "phrase_type": "para"
+  }
+]

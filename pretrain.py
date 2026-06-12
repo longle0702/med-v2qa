@@ -127,8 +127,8 @@ def main(args, config):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', default='./configs/Pretrain.yaml')
-    parser.add_argument('--checkpoint', default='/mnt/sda/lpf/weights/pre_training/albef/ALBEF.pth')  #
-    parser.add_argument('--output_dir', default='/mnt/sda/lpf/weights/output/V2/pretrain')
+    parser.add_argument('--checkpoint', default='')  #
+    parser.add_argument('--output_dir', default='./output/pretrain')
     parser.add_argument('--device', default='cuda', help='device id (i.e. 0 or 0,1 or cpu)')
     parser.add_argument('--seed', default=42, type=int)
     parser.add_argument('--world_size', default=1, type=int, help='number of distributed processes')

@@ -17,7 +17,7 @@ class VQAEval:
         self.evalAnsType = {}
         self.vqa = vqa
         self.vqaRes = vqaRes
-        self.params = {'question_id': vqa.getQuesIds()}
+        self.params = {'question_id': vqa.getQuesIds()} 
 
         self.ansComp = {}
 
@@ -110,10 +110,14 @@ class VQAEval:
         count_error = 0
         for quesId in quesIds:
             resAns = res[quesId]['answer']
-            resAns = pre_answer(resAns)
+            resAns = self.pre_answer(resAns)
+            # resAns = self.processPunctuation(resAns)
+            # resAns = self.processDigitArticle(resAns)
 
             gtAns = gts[quesId]['answer']
-            gtAns = pre_answer(gtAns)
+            gtAns = self.pre_answer(gtAns)
+            # gtAns = self.processPunctuation(gtAns)
+            # gtAns = self.processDigitArticle(gtAns)
 
             if gtAns == resAns:
                 gtAcc = 1
@@ -219,13 +223,15 @@ class VQAEval:
         sys.stdout.flush()
 
 
-def pre_answer(answer):
-    answer = str(answer)
-    answer = re.sub(
-        r"([,.'!?\"()*#:;~])",
-        '',
-        answer.lower(),
-    ).replace(' \t', ' ')
-    answer = answer.replace('x ray', 'xray').replace('x-ray', 'xray')
-    answer = answer.replace(' - ', '-')
-    return answer
+    def pre_answer(self, answer):
+        answer = str(answer)
+        answer = re.sub(
+            r"([,.'!?\"()*#:;~])",
+            '',
+            answer.lower(),
+        ).replace(' \t', ' ')
+        answer = answer.replace('x ray', 'xray').replace('x-ray', 'xray')
+        answer = answer.replace(' - ', '-')
+        answer = self.processPunctuation(answer)
+        answer = self.processDigitArticle(answer)
+        return answer

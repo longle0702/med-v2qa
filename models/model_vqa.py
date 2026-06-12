@@ -30,7 +30,12 @@ class MUMC_VQA(nn.Module):
 
         config_decoder.fusion_layer = 0
         config_decoder.num_hidden_layers = 6
-        self.text_decoder = BertLMHeadModel.from_pretrained(text_decoder, config=config_decoder)
+        config_decoder.hidden_size = 720
+        # Explicitly set the encoder dimension so cross-attention projects correctly
+        config_decoder.encoder_width = config_encoder.hidden_size
+        config_decoder.encoder_hidden_size = config_encoder.hidden_size
+        
+        self.text_decoder = BertLMHeadModel(config=config_decoder)
 
         if self.distill:
             self.visual_encoder_m = VisionTransformer(
@@ -38,7 +43,7 @@ class MUMC_VQA(nn.Module):
                 mlp_ratio=4, qkv_bias=True, norm_layer=partial(nn.LayerNorm, eps=1e-6))
             self.text_encoder_m = BertModel.from_pretrained(text_encoder, config=config_encoder,
                                                             add_pooling_layer=False)
-            self.text_decoder_m = BertLMHeadModel.from_pretrained(text_decoder, config=config_decoder)
+            self.text_decoder_m = BertLMHeadModel(config=config_decoder)
             self.model_pairs = [[self.visual_encoder, self.visual_encoder_m],
                                 [self.text_encoder, self.text_encoder_m],
                                 [self.text_decoder, self.text_decoder_m],

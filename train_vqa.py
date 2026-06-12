@@ -1,7 +1,7 @@
 import argparse
 import os
 import sys
-import ruamel_yaml as yaml
+from ruamel.yaml import YAML
 import time
 import datetime
 import json
@@ -18,6 +18,7 @@ from dataset import create_dataset, create_sampler, create_loader, vqa_collate_f
 from utils import cosine_lr_schedule
 
 from vqaEvaluate import compute_vqa_acc
+
 
 def train(model, data_loader, optimizer, epoch, device, config):
     # train
@@ -112,7 +113,7 @@ def main(args, config):
     if args.checkpoint:
         checkpoint = torch.load(args.checkpoint, map_location='cpu')
         state_dict = checkpoint['model']
-        # state_dict = checkpoint
+        # state_dict = checkpoint   
 
         # reshape positional embedding to accomodate for image resolution change
         pos_embed_reshaped = interpolate_pos_embed(state_dict['visual_encoder.pos_embed'], model.visual_encoder)
@@ -146,6 +147,20 @@ def main(args, config):
                     state_dict[decoder_key] = state_dict[key]
 
                     del state_dict[key]
+
+        # Intercept and slice the weights to match the pruned dimensions
+        model_sd = model.state_dict()
+        for key in list(state_dict.keys()):
+            if key in model_sd:
+                ckpt_tensor = state_dict[key]
+                model_tensor = model_sd[key]
+                
+                # If there's a shape mismatch, slice the checkpoint tensor
+                if ckpt_tensor.shape != model_tensor.shape:
+                    if ckpt_tensor.ndim == 1:
+                        state_dict[key] = ckpt_tensor[:model_tensor.shape[0]]
+                    elif ckpt_tensor.ndim == 2:
+                        state_dict[key] = ckpt_tensor[:model_tensor.shape[0], :model_tensor.shape[1]]
 
         msg = model.load_state_dict(state_dict, strict=False)
         print('load checkpoint from %s' % args.checkpoint)
@@ -181,7 +196,7 @@ def main(args, config):
                 # 'epoch': epoch,
             }
             prefix = args.checkpoint.split('/')[-1].split('.')[0]
-            if args.is_save_path and epoch > 20:
+            if args.is_save_path and epoch > 30:
                 torch.save(save_obj, os.path.join(args.output_dir, '%s_rad_%02d.pth' % (prefix, epoch)))
             vqa_result = evaluation(model, test_loader, device, config)
             json.dump(vqa_result, open(os.path.join(args.result_dir, '%s_vqa_result_%s.json' % (prefix, epoch)), 'w'))
@@ -201,8 +216,8 @@ def main(args, config):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset_use', default='rad', help='choose medical vqa dataset(rad, pathvqa, slake)')
-    parser.add_argument('--is_save_path', default=False)
-    parser.add_argument('--checkpoint', default='/mnt/sda/lpf/weights/output/V2/pretrain/std/med_pretrain_29.pth')
+    parser.add_argument('--is_save_path', default=True)
+    parser.add_argument('--checkpoint', default='')
     parser.add_argument('--output_suffix', default='', help='output suffix, eg. ../rad_29_1')
     parser.add_argument('--output_dir', default='', help='the final output path, need not to assign')
     parser.add_argument('--evaluate', action='store_true')
@@ -214,11 +229,15 @@ if __name__ == '__main__':
     parser.add_argument('--dist_url', default='env://', help='url used to set up distributed training')
     parser.add_argument('--distributed', default=False, type=bool)
 
-    args = parser.parse_args()
+    args = parser.parse_args(args=['--dataset_use', 'rad', '--checkpoint', './pretrain/med_pretrain_29.pth', '--output_dir', './output/rad'])
 
-    args.output_dir = '/mnt/sda/lpf/weights/output/V2/vqa/' + args.dataset_use + args.output_suffix
+    if not args.output_dir:
+        args.output_dir = os.path.join('./output/vqa/', args.dataset_use + args.output_suffix)
 
-    config = yaml.load(open('./configs/VQA.yaml', 'r'), Loader=yaml.Loader)
+    yaml_engine = YAML(typ='safe') 
+
+    with open('./configs/VQA.yaml', 'r') as f:
+        config = yaml_engine.load(f)
 
     args.result_dir = os.path.join(args.output_dir, 'result')
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
@@ -230,3 +249,4 @@ if __name__ == '__main__':
     print("config: ", config)
     print("args: ", args)
     main(args, config)
+
