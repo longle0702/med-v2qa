@@ -1,8 +1,10 @@
 # Medical VQA — MUMC
 
-Implementation of **MUMC** (Masked Vision and Language Pre-training with Unimodal and Multimodal Contrastive Losses) for Medical Visual Question Answering, accepted at [MICCAI 2023](https://conferences.miccai.org/2023/en/).
+This project is developed as part of an **Action Learning Course**, exploring Medical Visual Question Answering (VQA) using the **MUMC** architecture ([MICCAI 2023](https://conferences.miccai.org/2023/en/)) by [Pengfei Li et al.](https://github.com/pengfeiliHEU/MUMC)
 
-> Based on [MUMC](https://github.com/pengfeiliHEU/MUMC) by Pengfei Li et al. and inspired by [ALBEF](https://github.com/salesforce/ALBEF).
+MUMC stands for *Masked Vision and Language Pre-training with Unimodal and Multimodal Contrastive Losses*. This repo builds on the original MUMC codebase and extends it with evaluation tooling, semantic scoring via Gemini, and experiment tracking.
+
+> Architecture credit: [MUMC by Pengfei Li](https://github.com/pengfeiliHEU/MUMC), inspired by [ALBEF](https://github.com/salesforce/ALBEF).
 
 ---
 
