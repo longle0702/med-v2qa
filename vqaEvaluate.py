@@ -82,4 +82,4 @@ def compute_vqa_acc(answer_list_path, epoch=40, res_file_path=30):
 
     json.dump(all_result_list, open(compareFile, 'w'))
 
-    print('\nAll accuracy file saved to:', compareFile)
+    print('All accuracy file saved to:', compareFile)

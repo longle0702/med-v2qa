@@ -12,7 +12,7 @@ from dataset.utils import pre_question
 
 
 CONFIG_PATH  = './configs/VQA.yaml'
-CHECKPOINT   = 'output_v3/rad/med_pretrain_29_rad_31.pth'
+CHECKPOINT   = 'output/rad/med_pretrain_29_rad_31.pth'
 TEXT_ENCODER = 'bert-base-uncased'
 TEXT_DECODER = 'bert-base-uncased'
 
