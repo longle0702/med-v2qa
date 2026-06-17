@@ -1,0 +1,42 @@
+rad:
+  train_file: [ './data_RAD/trainset.json' ]
+  test_file: [ './data_RAD/testset.json' ]
+  answer_list: './data_RAD/answer_all_list.json'
+  vqa_root: './data_RAD/images/'
+pathvqa:
+  train_file: [ './data_PathVQA/pathvqa_train.json',
+                './data_PathVQA/pathvqa_val.json' ]
+  test_file: [ './data_PathVQA/pathvqa_test.json' ]
+  answer_list: './data_PathVQA/answer_trainval_list.json'
+  vqa_root: './data_PathVQA/images/'
+slake:
+  train_file: [ './data_Slake/en/slake_train.json',
+                './data_Slake/en/slake_val.json' ]
+  test_file: [ './data_Slake/en/slake_test.json' ]
+  answer_list: './data_Slake/en/answer_trainval_list.json'
+  vqa_root: './data_Slake/imgs/'  # slake
+med2019:
+  train_file: [ './vqa_med/2019/vqa_med_2019_train.json',
+                './vqa_med/2019/vqa_med_2019_valid.json' ]
+  test_file: [ './vqa_med/2019/vqa_med_2019_test.json' ]
+  answer_list: './vqa_med/2019/answer_trainval_list.json'
+  vqa_root: './vqa_med/2019/images/'
+
+image_res: 256      # 480  384  256
+batch_size_train: 8
+batch_size_test: 2
+k_test: 32
+
+alpha: 0.4
+distill: True
+warm_up: True
+
+eos: '[SEP]'
+bert_config: 'configs/config_bert.json'
+
+# optimizer
+init_lr: 2e-5
+weight_decay: 0.05
+#min_lr: 0
+min_lr: 1e-8
+max_epoch: 40
