@@ -16,7 +16,7 @@ Med V-Squared QA is an interactive clinical tool designed to streamline medical 
 
 ### Feature 2: Dual-Gate Medical Guardrail (Refusal System)
 
-- **Owner:**
+- **Owner:** Nithin
 - **Description:** Ensures the model only processes valid medical queries. Implements a two-step gate:
     1. A lightweight text-intent classifier rejects non-medical questions.
     2. A Softmax confidence threshold intercepts non-medical images that produce low-confidence "guesses," throwing a safe refusal message instead.
@@ -26,7 +26,7 @@ Med V-Squared QA is an interactive clinical tool designed to streamline medical 
 
 ### Feature 3: VQA-Driven Batch Triage Sorting
 
-- **Owner:**
+- **Owner:** Sathwika
 - **Description:** Allows doctors to upload a batch of images (e.g., 5-10 X-rays) at once. The system automatically runs a baseline query ("Is this image normal or abnormal?") across all images and sorts the UI queue so the doctor reviews the most critical/abnormal scans first.
 - **Model Usage:** Batch inference via the VQA model to classify images as normal or abnormal based on a standard query.
 - **Technical Requirements:** Batch processing logic in backend, dynamic UI sorting in React.
@@ -46,14 +46,14 @@ Med V-Squared QA is an interactive clinical tool designed to streamline medical 
 
 ### Feature 2: Hands-Free Voice Queries via Whisper
 
-- **Owner:**
+- **Owner:** 
 - **Enhancement Value:** Eliminates typing friction for doctors, allowing them to dictate queries naturally.
 - **Technical Requirements:** WebRTC microphone integration on the frontend, OpenAI Whisper API.
 - **Complexity:** Medium (1 day)
 
 ### Feature 3: Audio Diagnostic Readout (Voice-Out)
 
-- **Owner:**
+- **Owner:** Sathwika
 - **Enhancement Value:** Completes the hands-free loop. After the model generates a text answer, this feature reads the diagnostic result out loud so the doctor never has to look away from the patient or scan.
 - **Technical Requirements:** Native Web Speech API (JavaScript) or `pyttsx3/gTTS` (Python). 100% free implementation requiring no API keys or paid subscriptions.
 - **Complexity:** Simple (0.5 - 1 day)
