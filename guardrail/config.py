@@ -46,7 +46,7 @@ NON_MEDICAL_CANDIDATE_LABELS: list[str] = [
 #   0.40 → permissive (almost no false rejections on ambiguous queries)
 #   0.55 → default   (good balance, rejects clearly non-medical)
 #   0.70 → strict    (may reject borderline clinical terminology)
-INTENT_THRESHOLD: float = 0.55
+INTENT_THRESHOLD: float = 0.30
 
 # ---------------------------------------------------------------------------
 # Gate 2 – Softmax Confidence Gate

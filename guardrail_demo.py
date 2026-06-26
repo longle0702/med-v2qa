@@ -105,8 +105,8 @@ def main() -> int:
         help="Softmax top-1 probability floor for Gate 2 (default: 0.30).",
     )
     parser.add_argument(
-        "--intent-threshold", type=float, default=0.55, metavar="FLOAT",
-        help="Medical-intent score floor for Gate 1 (default: 0.55).",
+        "--intent-threshold", type=float, default=0.30, metavar="FLOAT",
+        help="Medical-intent score floor for Gate 1 (default: 0.30).",
     )
     parser.add_argument(
         "--num-beams", type=int, default=3,

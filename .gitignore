@@ -34,4 +34,5 @@ Thumbs.db
 # Git LFS (tracked via .gitattributes)
 # *.pth files are tracked via LFS
 # Exception: output checkpoints > 2 GB exceed GitHub LFS limit — host externally
-output/**/*.pth
+*.pth
+med_pretrain_29_rad_34.pth
