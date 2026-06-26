@@ -8,7 +8,7 @@ Usage
 -----
 ::
 
-    python triage_demo.py --images test_inference_data/open/synpic18319.jpg test_inference_data/open/synpic32933.jpg
+    python triage_demo.py --images test_inference_data/open/synpic18319.jpg test_inference_data/open/synpic32933.jpg /Users/alex0702/MyProjects/med-v2qa/test_inference_data/open/072.png
 
 Options
 -------
