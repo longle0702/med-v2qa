@@ -36,3 +36,11 @@ Thumbs.db
 # Exception: output checkpoints > 2 GB exceed GitHub LFS limit — host externally
 *.pth
 med_pretrain_29_rad_34.pth
+
+# Output / results
+output/
+results/
+
+# Data
+data_RAD/
+data_test/
