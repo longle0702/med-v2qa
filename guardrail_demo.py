@@ -129,9 +129,11 @@ def main() -> int:
         format="%(levelname)-8s %(name)s: %(message)s",
     )
 
+    from guardrail.config import CHECKPOINT_PATH  # noqa: PLC0415
     print(CYAN(BANNER))
     print(f"  {BOLD('Image   :')} {args.image}")
     print(f"  {BOLD('Question:')} {args.question}")
+    print(f"  {BOLD('Model   :')} {DIM(CHECKPOINT_PATH)}")
     print(f"  {BOLD('Thresholds:')} intent={args.intent_threshold}  "
           f"confidence={args.confidence_threshold}")
     print()
