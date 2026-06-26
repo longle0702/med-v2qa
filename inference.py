@@ -1,4 +1,4 @@
-# python inference.py --image data_test/close/synpic29265.jpg --question "What is this type of image?"
+# python inference.py --image test_inference_data/open/synpic18319.jpg --question "Describe the lung abnormalities?"
 
 import argparse
 import torch
@@ -12,7 +12,7 @@ from dataset.utils import pre_question
 
 
 CONFIG_PATH  = './configs/VQA.yaml'
-CHECKPOINT   = './med_pretrain_29_rad_31.pth'
+CHECKPOINT   = './med_pretrain_29_rad_34.pth'
 TEXT_ENCODER = 'bert-base-uncased'
 TEXT_DECODER = 'bert-base-uncased'
 
@@ -108,7 +108,13 @@ def main():
                         help='Max answer tokens (default: 20).')
     args = parser.parse_args()
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+    elif torch.backends.mps.is_available():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
+
     print(f'Loading model on {device}...')
     model, tokenizer, transform = load_model(device)
 
