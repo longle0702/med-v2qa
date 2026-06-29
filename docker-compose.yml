@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: med-v2qa-api:latest
+    container_name: med-v2qa-api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount the 2.2 GB checkpoint read-only (not baked into image)
+      - ./med_pretrain_29_rad_34.pth:/app/med_pretrain_29_rad_34.pth:ro
+      # Mount pre-exported ONNX models (optional — falls back to PyTorch)
+      - ./onnx_models:/app/onnx_models:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s   # allow time for model to load

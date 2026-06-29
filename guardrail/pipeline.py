@@ -45,6 +45,8 @@ from guardrail.intent_classifier import MedicalIntentClassifier
 from guardrail.refusal import build_refusal
 from guardrail.result_types import GuardrailResult
 
+
+
 # Module-level imports so @patch("guardrail.pipeline.load_model") and
 # @patch("guardrail.pipeline.predict") work in tests.
 from inference import load_model, predict  # noqa: E402
@@ -70,11 +72,9 @@ class GuardrailPipeline:
     text_decoder:
         HuggingFace model name for the BERT decoder.
         Defaults to ``config.TEXT_DECODER``.
-    intent_model:
-        HuggingFace model name for the zero-shot intent classifier.
-        Defaults to ``config.INTENT_MODEL_NAME``.
     intent_threshold:
-        Minimum medical-intent score to pass Gate 1.
+        Minimum cumulative seed-token probability for Gate 1 to pass.
+        Gate 1 uses the same MUMC .pth model — no extra weights needed.
         Defaults to ``config.INTENT_THRESHOLD``.
     confidence_threshold:
         Minimum Softmax top-1 probability to pass Gate 2.
@@ -94,11 +94,15 @@ class GuardrailPipeline:
         config_path: str = cfg.CONFIG_PATH,
         text_encoder: str = cfg.TEXT_ENCODER,
         text_decoder: str = cfg.TEXT_DECODER,
-        intent_model: str = cfg.INTENT_MODEL_NAME,
         intent_threshold: float = cfg.INTENT_THRESHOLD,
         confidence_threshold: float = cfg.CONFIDENCE_THRESHOLD,
         device: Optional[str] = None,
         lazy: bool = True,
+        # ── Model injection (API server passes pre-loaded components) ──
+        preloaded_model=None,
+        preloaded_tokenizer=None,
+        preloaded_transform=None,
+        preloaded_device: Optional[torch.device] = None,
     ) -> None:
         self.checkpoint = checkpoint
         self.config_path = config_path
@@ -108,7 +112,9 @@ class GuardrailPipeline:
         self.confidence_threshold = confidence_threshold
 
         # Device resolution
-        if device is not None:
+        if preloaded_device is not None:
+            self.device = preloaded_device
+        elif device is not None:
             self.device = torch.device(device)
         elif torch.cuda.is_available():
             self.device = torch.device("cuda")
@@ -119,20 +125,36 @@ class GuardrailPipeline:
 
         logger.info("GuardrailPipeline device: %s", self.device)
 
-        # Gate 1 (always CPU to avoid competing with the GPU-resident VQA model)
+        # Gate 1 — powered by the MUMC .pth model (no BART weights needed).
+        # Model components are injected lazily once the VQA model is loaded;
+        # until then the classifier bypasses Gate 1 (passes through).
         self._intent_clf = MedicalIntentClassifier(
-            model_name=intent_model,
             threshold=intent_threshold,
-            device="cpu",
+            device=self.device,
         )
 
-        # VQA model components — populated lazily or eagerly
+        # VQA model components — populated lazily, eagerly, or injected.
         self._model = None
         self._tokenizer = None
         self._transform = None
         self._gate2: Optional[ConfidenceGate] = None
 
-        if not lazy:
+        # If the caller already loaded the model (e.g. API startup), inject it
+        # into both Gate 1 and Gate 2 immediately.
+        if preloaded_model is not None:
+            self._model = preloaded_model
+            self._tokenizer = preloaded_tokenizer
+            self._transform = preloaded_transform
+            # Inject model into Gate 1
+            self._intent_clf.set_model(
+                model=self._model,
+                tokenizer=self._tokenizer,
+                device=self.device,
+            )
+            # Gate 2 is CLIP-based — independent of the VQA model
+            self._gate2 = ConfidenceGate(device=self.device)
+            logger.info("GuardrailPipeline: using pre-loaded MUMC model + CLIP Gate 2.")
+        elif not lazy:
             self._load_vqa_model()
 
     # ------------------------------------------------------------------
@@ -152,14 +174,17 @@ class GuardrailPipeline:
 
         self._model, self._tokenizer, self._transform = load_model(self.device)
 
-        self._gate2 = ConfidenceGate(
+        # Inject model into Gate 1 now that it is loaded
+        self._intent_clf.set_model(
             model=self._model,
             tokenizer=self._tokenizer,
-            transform=self._transform,
             device=self.device,
-            threshold=self.confidence_threshold,
         )
-        logger.info("MUMC VQA model loaded and Gate 2 initialised.")
+
+        # Gate 2 is CLIP-based — independent of VQA model, loads its own weights lazily
+        self._gate2 = ConfidenceGate(device=self.device)
+        logger.info("MUMC VQA model loaded, Gate 1 and Gate 2 (CLIP) initialised.")
+
 
     # ------------------------------------------------------------------
     # Public API
@@ -169,7 +194,7 @@ class GuardrailPipeline:
         self,
         image_path: str,
         question: str,
-        num_beams: int = 3,
+        num_beams: int = 5,
         max_new_tokens: int = 20,
     ) -> GuardrailResult:
         """
@@ -263,3 +288,27 @@ class GuardrailPipeline:
                 "max_new_tokens": max_new_tokens,
             },
         )
+
+    def check_image(self, image_path: str) -> bool:
+        """
+        Screen a single image using the CLIP-based Gate 2.
+
+        Used by the triage endpoint to filter non-medical images before scoring.
+        Delegates directly to ``ConfidenceGate.check()`` so triage and
+        ``/predict`` Gate 2 share **identical** classification logic.
+
+        Returns
+        -------
+        bool
+            ``True`` if the image passes (valid medical scan), ``False`` otherwise.
+        """
+        self._load_vqa_model()
+        result = self._gate2.check(image_path)
+        logger.info(
+            "Triage CLIP screen [%s]: medical_score=%.4f threshold=%.2f — %s",
+            image_path,
+            result.top_prob,
+            result.threshold,
+            "PASS" if result.passed else "FAIL",
+        )
+        return result.passed

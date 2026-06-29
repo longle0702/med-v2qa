@@ -34,6 +34,13 @@ Thumbs.db
 # Git LFS (tracked via .gitattributes)
 med_pretrain_29_rad_34.pth
 
+# Large Model Files
+*.pth
+*.onnx
+*.bin
+guardrail/clip_model/
+onnx_models/
+
 # Output / results
 output/
 results/

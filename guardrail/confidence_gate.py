@@ -1,23 +1,24 @@
 """
 guardrail/confidence_gate.py
 -----------------------------
-Gate 2 – Softmax Confidence Gate.
+Gate 2 – CLIP-based Medical Image Classifier.
 
-Runs a **single greedy forward pass** (one decoder step only) through the
-already-loaded MUMC model and reads the top-1 Softmax probability at the
-first decoding position.  If that probability falls below the configured
-threshold the image is considered non-medical and the request is refused.
+Uses ``openai/clip-vit-base-patch32`` (loaded from a local cache) to perform
+zero-shot classification: it embeds the image and a set of medical vs.
+non-medical text prompts and compares cosine similarities.
 
 Design rationale
 ----------------
-- One decoder step is orders of magnitude faster than full beam-search
-  inference, so Gate 2 adds minimal latency.
-- We reuse the visual encoder and text encoder that are already resident
-  in memory — no extra model weights are loaded.
-- The Softmax distribution at the first BOS→token step is a reliable
-  proxy for model confidence: a high-entropy distribution (low max prob)
-  indicates the model has no strong prior over possible answers, which is
-  the hallmark of out-of-domain inputs.
+- CLIP is purpose-built for image-text alignment and produces robust
+  zero-shot classifiers without any fine-tuning.
+- Medical scans (X-rays, MRI, CT) produce high cosine similarity with
+  prompts like "a chest X-ray" or "a medical scan", and low similarity
+  with "a photo of a dog" or "a selfie".
+- The gate is **independent** of the MUMC VQA model — it loads its own
+  small (~600 MB) weights once and keeps them on CPU by default to avoid
+  competing with the GPU-resident VQA model.
+- The local model path is configured in ``config.CLIP_MODEL_PATH`` so
+  no network access is required after the initial download.
 """
 
 from __future__ import annotations
@@ -28,120 +29,136 @@ from typing import Optional
 import torch
 import torch.nn.functional as F
 from PIL import Image
+from transformers import CLIPModel, CLIPProcessor
 
-from guardrail.config import CONFIDENCE_THRESHOLD
+from guardrail.config import CLIP_MODEL_PATH, CLIP_THRESHOLD
 from guardrail.result_types import ConfidenceResult
 
 logger = logging.getLogger(__name__)
 
+# ---------------------------------------------------------------------------
+# Medical vs. non-medical prompt sets
+# ---------------------------------------------------------------------------
+
+_MEDICAL_PROMPTS = [
+    "a chest X-ray image",
+    "a medical scan",
+    "an MRI image",
+    "a CT scan",
+    "a radiological image",
+    "a clinical medical image",
+    "an ultrasound image",
+    "a pathology slide",
+    "a medical imaging study",
+    "an X-ray of the lungs",
+]
+
+_NON_MEDICAL_PROMPTS = [
+    "a photo of a dog",
+    "a selfie photo",
+    "a photo of nature",
+    "a food photograph",
+    "a street photo",
+    "a photo of people",
+    "a cartoon",
+    "a screenshot",
+    "a photo of a car",
+    "a painting or artwork",
+]
+
 
 class ConfidenceGate:
     """
-    Gate 2: checks image-level confidence via the MUMC decoder.
+    Gate 2: CLIP-based zero-shot medical image classifier.
 
     Parameters
     ----------
-    model:
-        Loaded ``MUMC_VQA`` instance (already in eval mode).
-    tokenizer:
-        BERT tokenizer associated with the model.
-    transform:
-        torchvision transform pipeline used to pre-process images.
     device:
-        Torch device the model lives on.
+        Torch device to run CLIP on.  Defaults to ``\"cpu\"`` to avoid
+        competing with the GPU-resident VQA model.
     threshold:
-        Minimum top-1 Softmax probability required to pass.
-        Defaults to ``config.CONFIDENCE_THRESHOLD``.
+        Minimum medical softmax score required to pass.
+        Defaults to ``config.CLIP_THRESHOLD``.
+    model_path:
+        Local path to the saved CLIP model directory.
+        Defaults to ``config.CLIP_MODEL_PATH``.
     """
 
     def __init__(
         self,
-        model,
-        tokenizer,
-        transform,
-        device: torch.device,
-        threshold: float = CONFIDENCE_THRESHOLD,
+        device: torch.device = torch.device("cpu"),
+        threshold: float = CLIP_THRESHOLD,
+        model_path: str = CLIP_MODEL_PATH,
+        # Legacy VQA-model args kept for API compatibility — unused by CLIP gate
+        model=None,
+        tokenizer=None,
+        transform=None,
     ) -> None:
-        self.model = model
-        self.tokenizer = tokenizer
-        self.transform = transform
         self.device = device
         self.threshold = threshold
+        self.model_path = model_path
+
+        self._clip_model: Optional[CLIPModel] = None
+        self._clip_processor: Optional[CLIPProcessor] = None
 
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
 
-    def _encode_image(self, image_path: str) -> torch.Tensor:
-        """Load and transform an image file into a batched tensor."""
-        image = Image.open(image_path).convert("RGB")
-        return self.transform(image).unsqueeze(0).to(self.device)
-
-    def _encode_question(self, question: str):
-        """Tokenise the question string."""
-        from dataset.utils import pre_question  # noqa: PLC0415
-
-        processed = pre_question(question, max_ques_words=50)
-        return self.tokenizer(
-            [processed],
-            padding="longest",
-            truncation=True,
-            max_length=25,
-            return_tensors="pt",
-        ).to(self.device)
+    def _load(self) -> None:
+        """Lazily load the CLIP model and processor from the local cache."""
+        if self._clip_model is not None:
+            return
+        logger.info(
+            "Loading CLIP model from '%s' on device '%s' …",
+            self.model_path,
+            self.device,
+        )
+        self._clip_model = CLIPModel.from_pretrained(self.model_path)
+        self._clip_model = self._clip_model.to(self.device)
+        self._clip_model.eval()
+        self._clip_processor = CLIPProcessor.from_pretrained(self.model_path)
+        logger.info("CLIP model ready.")
 
     @torch.no_grad()
-    def _get_top_prob(
-        self,
-        image_tensor: torch.Tensor,
-        q_enc,
-    ) -> tuple[float, Optional[int]]:
+    def _classify(self, image_path: str) -> tuple[float, float]:
         """
-        Run one decoder step and return the top-1 Softmax probability.
+        Compute zero-shot medical vs. non-medical probabilities.
 
         Returns
         -------
-        (top_prob, top_token_id)
+        (medical_score, non_medical_score)
+            Softmax probabilities summed over medical / non-medical prompts.
         """
-        # 1. Visual encoding
-        image_embeds = self.model.visual_encoder(image_tensor)
-        image_atts = torch.ones(
-            image_embeds.size()[:-1], dtype=torch.long
-        ).to(self.device)
+        image = Image.open(image_path).convert("RGB")
+        all_prompts = _MEDICAL_PROMPTS + _NON_MEDICAL_PROMPTS
 
-        # 2. Text (question) encoding with cross-attention on image
-        question_output = self.model.text_encoder(
-            q_enc.input_ids,
-            attention_mask=q_enc.attention_mask,
-            encoder_hidden_states=image_embeds,
-            encoder_attention_mask=image_atts,
-            return_dict=True,
+        inputs = self._clip_processor(
+            text=all_prompts,
+            images=image,
+            return_tensors="pt",
+            padding=True,
         )
+        # Move all tensors to device
+        inputs = {k: v.to(self.device) for k, v in inputs.items()}
 
-        # 3. Single decoder step: BOS token → first output distribution
-        bos_ids = torch.tensor(
-            [[self.tokenizer.cls_token_id]], device=self.device
-        )
-        decoder_output = self.model.text_decoder(
-            bos_ids,
-            encoder_hidden_states=question_output.last_hidden_state,
-            encoder_attention_mask=q_enc.attention_mask,
-            return_dict=True,
-            reduction="none",
-        )
+        outputs = self._clip_model(**inputs)
 
-        # logits shape: (1, 1, vocab_size)
-        logits = decoder_output.logits[:, 0, :]           # (1, vocab_size)
-        probs = F.softmax(logits, dim=-1)                  # (1, vocab_size)
-        top_prob, top_idx = probs.max(dim=-1)
+        # logits_per_image: (1, num_prompts) — similarity of image to each prompt
+        logits = outputs.logits_per_image[0]           # (num_prompts,)
+        probs = F.softmax(logits, dim=0)               # (num_prompts,)
 
-        return top_prob.item(), top_idx.item()
+        n_med = len(_MEDICAL_PROMPTS)
+        medical_score = probs[:n_med].sum().item()
+        non_medical_score = probs[n_med:].sum().item()
+
+        return medical_score, non_medical_score
 
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
 
-    def check(self, image_path: str, question: str) -> ConfidenceResult:
+    def check(self, image_path: str, question: str = "") -> ConfidenceResult:
         """
         Evaluate whether the image is likely a valid medical scan.
 
@@ -150,30 +167,29 @@ class ConfidenceGate:
         image_path:
             Absolute or relative path to the image file.
         question:
-            The user's question (used for cross-attention context).
+            Unused — kept for API compatibility with the pipeline caller.
 
         Returns
         -------
         ConfidenceResult
-            ``passed=True`` when ``top_prob >= threshold``.
+            ``passed=True`` when medical_score ≥ threshold.
         """
-        image_tensor = self._encode_image(image_path)
-        q_enc = self._encode_question(question)
+        self._load()
 
-        top_prob, top_token_id = self._get_top_prob(image_tensor, q_enc)
-
-        passed = top_prob >= self.threshold
+        medical_score, non_medical_score = self._classify(image_path)
+        passed = medical_score >= self.threshold
 
         logger.debug(
-            "Confidence gate | top_prob=%.4f threshold=%.4f passed=%s",
-            top_prob,
+            "CLIP gate | medical=%.4f non_medical=%.4f threshold=%.4f passed=%s",
+            medical_score,
+            non_medical_score,
             self.threshold,
             passed,
         )
 
         return ConfidenceResult(
             passed=passed,
-            top_prob=top_prob,
+            top_prob=medical_score,
             threshold=self.threshold,
-            top_token_id=top_token_id,
+            top_token_id=None,
         )

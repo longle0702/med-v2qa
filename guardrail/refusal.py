@@ -28,10 +28,8 @@ REFUSAL_MESSAGES: dict[str, str] = {
         "and try again."
     ),
     "confidence": (
-        "The uploaded image does not appear to be a recognisable medical scan "
-        "(e.g. X-ray, MRI, CT, or pathology slide). To protect patient safety, "
-        "this system only analyses validated medical imaging. Please upload an "
-        "appropriate clinical image and try again."
+        "The uploaded image does not appear to be a recognisable medical scan. "
+        "Please upload an appropriate clinical image and try again."
     ),
 }
 

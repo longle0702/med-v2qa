@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Med-V²QA</title>
+  <meta name="description" content="Interactive clinical tool for medical image visual question answering powered by MUMC architecture." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Design tokens — black & white gradient ─────────────────── */
+    :root {
+      --bg-base:        #000000;
+      --bg-surface:     #0d0d0d;
+      --bg-card:        #141414;
+      --bg-input:       #0a0a0a;
+      --border:         #242424;
+      --border-bright:  #383838;
+      --white:          #ffffff;
+      --white-ghost:    rgba(255,255,255,.07);
+      --white-glow:     rgba(255,255,255,.10);
+      --pass-bg:        rgba(255,255,255,.05);
+      --pass-border:    rgba(255,255,255,.30);
+      --fail-bg:        rgba(255,255,255,.02);
+      --fail-border:    rgba(255,255,255,.10);
+      --text-primary:   #ffffff;
+      --text-secondary: #9a9a9a;
+      --text-muted:     #4a4a4a;
+      --radius-sm:      6px;
+      --radius-md:      12px;
+      --radius-lg:      18px;
+      --shadow:         0 8px 32px rgba(0,0,0,.8);
+      --gradient:       linear-gradient(135deg, #ffffff 0%, #888888 100%);
+      --gradient-soft:  linear-gradient(135deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.03) 100%);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 99px; }
+
+    /* ─── Header ─────────────────────────────────────────────────── */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 40px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,.88);
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(16px);
+    }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand-mark {
+      width: 36px; height: 36px; border-radius: 9px;
+      background: var(--gradient);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 20px var(--white-glow);
+    }
+    .brand-mark svg { width: 18px; height: 18px; fill: #000; }
+    .brand-name {
+      font-size: 1.2rem; font-weight: 700; letter-spacing: -0.03em;
+      background: var(--gradient); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .brand-sub { font-size: .68rem; color: var(--text-muted); letter-spacing: .1em; text-transform: uppercase; margin-top: 1px; }
+    .status-pill {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 16px; border-radius: 99px;
+      border: 1px solid var(--border); background: var(--bg-card);
+      font-size: .78rem; color: var(--text-secondary);
+    }
+    .status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--white); box-shadow: 0 0 8px var(--white);
+      animation: pulse-dot 2.5s ease-in-out infinite;
+    }
+    .status-dot.offline { background: var(--text-muted); box-shadow: none; animation: none; }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.3} }
+    #backend-label { font-weight: 600; color: var(--white); font-family: 'JetBrains Mono', monospace; font-size: .75rem; }
+
+    /* ─── Tabs ────────────────────────────────────────────────────── */
+    .tab-bar { display: flex; gap: 2px; padding: 28px 40px 0; }
+    .tab-btn {
+      padding: 8px 22px; border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background: transparent; color: var(--text-muted);
+      font-family: 'Inter', sans-serif; font-size: .85rem; font-weight: 500;
+      cursor: pointer; transition: all .2s;
+    }
+    .tab-btn:hover { color: var(--text-secondary); }
+    .tab-btn.active {
+      background: var(--bg-card); color: var(--white);
+      border-color: var(--border-bright);
+      box-shadow: 0 0 20px var(--white-glow);
+    }
+
+    /* ─── Main layout ─────────────────────────────────────────────── */
+    main { padding: 28px 40px 60px; max-width: 1100px; margin: 0 auto; }
+    .tab-panel { display: none; animation: fadein .25s ease; }
+    .tab-panel.active { display: block; }
+    @keyframes fadein { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ─── Cards ───────────────────────────────────────────────────── */
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 24px;
+    }
+    .card-title {
+      font-size: .72rem; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px;
+    }
+
+    /* ─── VQA layout ──────────────────────────────────────────────── */
+    .vqa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media(max-width:760px){ .vqa-grid{ grid-template-columns: 1fr; } }
+
+    /* ─── Drop zone ───────────────────────────────────────────────── */
+    .drop-zone {
+      border: 1px dashed var(--border-bright);
+      border-radius: var(--radius-md);
+      min-height: 240px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      cursor: pointer; transition: all .25s;
+      position: relative; overflow: hidden;
+      background: var(--bg-input);
+    }
+    .drop-zone:hover, .drop-zone.dragging {
+      border-color: var(--white);
+      background: var(--white-ghost);
+      box-shadow: 0 0 28px var(--white-glow);
+    }
+    /* input always on top — never blocked by preview */
+    .drop-zone input[type=file] {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer;
+      width: 100%; height: 100%;
+      z-index: 10;
+    }
+    /* preview never intercepts clicks */
+    .drop-preview {
+      width: 100%; height: 100%; object-fit: contain;
+      position: absolute; inset: 0;
+      border-radius: var(--radius-md);
+      z-index: 1; pointer-events: none;
+    }
+    .drop-overlay {
+      position: absolute; inset: 0; z-index: 5;
+      background: rgba(0,0,0,.65);
+      display: none; align-items: center; justify-content: center;
+      color: var(--white); font-size: .82rem; font-weight: 500;
+      letter-spacing: .06em; text-transform: uppercase;
+      pointer-events: none;
+    }
+    .drop-zone:hover .drop-overlay { display: flex; }
+    .drop-placeholder {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      z-index: 2; pointer-events: none;
+    }
+    .drop-icon-ring {
+      width: 52px; height: 52px; border-radius: 50%;
+      border: 1px dashed var(--border-bright);
+      display: flex; align-items: center; justify-content: center; margin-bottom: 4px;
+    }
+    .drop-icon-ring svg { width: 22px; height: 22px; stroke: var(--text-muted); fill: none; stroke-width: 1.5; }
+    .drop-label { font-size: .88rem; color: var(--text-secondary); font-weight: 500; }
+    .drop-sub { font-size: .72rem; color: var(--text-muted); }
+
+    /* ─── Form controls ───────────────────────────────────────────── */
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: .72rem; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; letter-spacing: .06em; text-transform: uppercase; }
+    textarea {
+      width: 100%; padding: 11px 14px;
+      background: var(--bg-input); color: var(--text-primary);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif; font-size: .9rem;
+      transition: border-color .2s, box-shadow .2s;
+      outline: none; resize: none; min-height: 110px; line-height: 1.55;
+    }
+    textarea:focus {
+      border-color: var(--border-bright);
+      box-shadow: 0 0 0 3px var(--white-ghost);
+    }
+
+    /* ─── Button ──────────────────────────────────────────────────── */
+    .btn-primary {
+      width: 100%; padding: 13px 24px;
+      background: var(--gradient);
+      color: #000; border: none; border-radius: var(--radius-md);
+      font-family: 'Inter', sans-serif; font-size: .92rem; font-weight: 700;
+      cursor: pointer; transition: all .2s;
+      box-shadow: 0 4px 20px rgba(255,255,255,.12);
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 28px rgba(255,255,255,.22);
+    }
+    .btn-primary:active:not(:disabled) { transform: translateY(0); }
+    .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+    .spinner {
+      display: none; width: 15px; height: 15px;
+      border: 2px solid rgba(0,0,0,.25); border-top-color: #000;
+      border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0;
+    }
+    .btn-primary.loading .spinner { display: block; }
+    .btn-primary.loading .btn-text { opacity: .8; }
+    @keyframes spin { to{ transform: rotate(360deg); } }
+
+    /* ─── Section label ───────────────────────────────────────────── */
+    .section-label {
+      font-size: .7rem; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--text-muted);
+      margin: 26px 0 12px; display: flex; align-items: center; gap: 10px;
+    }
+    .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+    /* ─── Answer box ──────────────────────────────────────────────── */
+    .answer-box {
+      padding: 24px; border-radius: var(--radius-lg);
+      border: 1px solid var(--border); background: var(--bg-card);
+      transition: all .3s; min-height: 100px;
+    }
+    .answer-box.pass { border-color: var(--pass-border); background: var(--pass-bg); }
+    .answer-box.fail { border-color: var(--fail-border); background: var(--fail-bg); }
+    .answer-label { font-size: .7rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+    .answer-text {
+      font-size: 1.08rem; font-weight: 500; color: var(--text-primary); line-height: 1.6;
+    }
+    .answer-text.idle { color: var(--text-muted); font-weight: 400; font-size: .92rem; }
+    .answer-text.refused { color: var(--text-secondary); }
+
+    /* ─── Triage ──────────────────────────────────────────────────── */
+    .triage-drop {
+      border: 1px dashed var(--border-bright);
+      border-radius: var(--radius-md); padding: 40px; text-align: center;
+      background: var(--bg-input); cursor: pointer;
+      transition: all .25s; position: relative;
+    }
+    .triage-drop:hover, .triage-drop.dragging {
+      border-color: var(--white); background: var(--white-ghost);
+      box-shadow: 0 0 28px var(--white-glow);
+    }
+    .triage-drop input[type=file] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer;
+      width: 100%; height: 100%; z-index: 10;
+    }
+    .triage-drop-inner { pointer-events: none; }
+    .triage-drop-icon {
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 1px dashed var(--border-bright);
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
+    }
+    .triage-drop-icon svg { width: 20px; height: 20px; stroke: var(--text-muted); fill: none; stroke-width: 1.5; }
+    .triage-drop-label { font-size: .9rem; color: var(--text-secondary); font-weight: 500; }
+    .triage-drop-sub { font-size: .75rem; color: var(--text-muted); margin-top: 4px; }
+
+    .triage-thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .triage-thumb {
+      position: relative; width: 76px;
+      border-radius: 8px; overflow: hidden; border: 1px solid var(--border);
+    }
+    .triage-thumb img { width: 76px; height: 76px; object-fit: cover; display: block; }
+    .triage-fname { font-size: .58rem; color: var(--text-muted); padding: 3px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background: var(--bg-card); }
+    .thumb-remove {
+      position: absolute; top: 3px; right: 3px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(0,0,0,.8); border: 1px solid var(--border-bright);
+      color: var(--white); cursor: pointer; font-size: 11px;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity .15s;
+    }
+    .triage-thumb:hover .thumb-remove { opacity: 1; }
+
+    .triage-actions { display: flex; align-items: center; gap: 14px; margin-top: 18px; }
+    .triage-count { font-size: .82rem; color: var(--text-muted); }
+
+    /* ─── Queue ───────────────────────────────────────────────────── */
+    .queue-list { display: flex; flex-direction: column; gap: 8px; }
+    .queue-item {
+      display: grid; grid-template-columns: 36px 1fr auto;
+      align-items: center; gap: 14px;
+      padding: 14px 18px; border-radius: var(--radius-md);
+      border: 1px solid var(--border); background: var(--bg-input);
+      animation: fadein .3s ease both;
+    }
+    .queue-item.abnormal { border-color: rgba(255,255,255,.18); background: var(--white-ghost); }
+    .queue-rank {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .82rem; font-weight: 700; color: var(--text-muted);
+    }
+    .queue-rank.r1 { background: var(--gradient-soft); border-color: var(--border-bright); color: var(--white); }
+    .queue-rank.r2 { border-color: var(--border-bright); color: var(--text-secondary); }
+    .queue-info { min-width: 0; }
+    .queue-filename { font-size: .88rem; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .score-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+    .score-bar { flex: 1; height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .score-fill { height: 100%; border-radius: 99px; background: var(--gradient); transition: width .9s cubic-bezier(.23,1,.32,1); }
+    .score-pct { font-size: .7rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); min-width: 30px; text-align: right; }
+    .badge {
+      padding: 4px 12px; border-radius: 99px;
+      font-size: .72rem; font-weight: 600; letter-spacing: .04em;
+      border: 1px solid var(--border); color: var(--text-secondary); background: var(--bg-card);
+    }
+    .badge.abnormal { color: var(--white); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.28); }
+    .badge.refused { color: var(--text-muted); background: transparent; border-color: var(--border); font-style: italic; }
+    .queue-item.refused-item { opacity: .5; }
+
+    /* ─── Empty state ─────────────────────────────────────────────── */
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); font-size: .88rem; }
+    .empty-ring {
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 1px dashed var(--border);
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;
+    }
+    .empty-ring svg { width: 22px; height: 22px; stroke: var(--border-bright); fill: none; stroke-width: 1.5; }
+
+    /* ─── Toast ───────────────────────────────────────────────────── */
+    #toast {
+      position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+      padding: 11px 18px; border-radius: var(--radius-md);
+      background: var(--bg-card); border: 1px solid var(--border-bright);
+      color: var(--text-primary); font-size: .85rem;
+      box-shadow: var(--shadow); pointer-events: none;
+      transform: translateY(12px); opacity: 0; transition: all .28s; max-width: 320px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.err  { border-color: rgba(255,255,255,.35); color: var(--white); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div>
+      <div class="brand-name">Med-V²QA</div>
+    </div>
+  </div>
+  <div class="status-pill">
+    <div class="status-dot" id="status-dot"></div>
+    Backend: <span id="backend-label">connecting</span>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('vqa',this)">Clinical VQA</button>
+  <button class="tab-btn" onclick="switchTab('triage',this)">Batch Triage</button>
+</div>
+
+<main>
+
+  <!-- ── TAB 1: VQA ─────────────────────────────────────────────── -->
+  <div class="tab-panel active" id="panel-vqa">
+    <div class="vqa-grid">
+
+      <!-- Image upload -->
+      <div class="card">
+        <div class="card-title">Medical Image</div>
+        <div class="drop-zone" id="vqa-drop">
+          <input type="file" id="vqa-file" accept="image/*" onchange="handleVqaFile(this)" />
+          <img id="vqa-preview" class="drop-preview" style="display:none" alt="preview" />
+          <div class="drop-overlay">Click to change image</div>
+          <div class="drop-placeholder" id="vqa-placeholder">
+            <div class="drop-icon-ring">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <div class="drop-label">Drop image or click to browse</div>
+            <div class="drop-sub">JPEG · PNG · TIFF · WebP</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question -->
+      <div class="card">
+        <div class="card-title">Clinical Query</div>
+        <div class="form-group">
+          <label>Question</label>
+          <textarea id="vqa-question" placeholder="e.g. Describe the lung abnormalities visible in this scan." style="min-height:148px;"></textarea>
+        </div>
+        <button class="btn-primary" id="vqa-btn" onclick="runVqa()">
+          <div class="spinner"></div>
+          <span class="btn-text">Run Inference</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Answer -->
+    <div class="section-label">Response</div>
+    <div class="answer-box" id="answer-box">
+      <div class="answer-label">Model Answer</div>
+      <div class="answer-text idle" id="answer-text">Submit an image and question to see the clinical answer.</div>
+    </div>
+  </div>
+
+  <!-- ── TAB 2: TRIAGE ──────────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-triage">
+    <div class="card">
+      <div class="card-title">Upload Batch</div>
+      <div class="triage-drop" id="triage-drop">
+        <input type="file" id="triage-file" accept="image/*" multiple onchange="handleTriageFiles(this)" />
+        <div class="triage-drop-inner">
+          <div class="triage-drop-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          </div>
+          <div class="triage-drop-label">Drop multiple images or click to browse</div>
+          <div class="triage-drop-sub">Upload 2–20 scans — system ranks by abnormality</div>
+        </div>
+      </div>
+      <div class="triage-thumbs" id="triage-thumbs"></div>
+    </div>
+
+    <div class="triage-actions">
+      <button class="btn-primary" id="triage-btn" onclick="runTriage()" style="max-width:200px;">
+        <div class="spinner"></div>
+        <span class="btn-text">Sort by Criticality</span>
+      </button>
+      <span class="triage-count" id="triage-count"></span>
+    </div>
+
+    <div class="section-label">Triage Queue</div>
+    <div class="queue-list" id="queue-list">
+      <div class="empty-state">
+        <div class="empty-ring">
+          <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+        </div>
+        Upload a batch of images and click Sort to see the triage queue.
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+const API = '';
+let vqaFile = null;
+let triageFiles = [];
+
+/* Tabs */
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* Health check */
+async function checkHealth() {
+  const dot = document.getElementById('status-dot');
+  const lbl = document.getElementById('backend-label');
+  try {
+    const r = await fetch(API + '/health');
+    const d = await r.json();
+    lbl.textContent = d.backend.toUpperCase() + ' · ' + d.device;
+    dot.className = 'status-dot';
+  } catch {
+    lbl.textContent = 'offline';
+    dot.className = 'status-dot offline';
+  }
+}
+checkHealth();
+setInterval(checkHealth, 20000);
+
+/* Toast */
+let _tt;
+function toast(msg, isErr = false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (isErr ? ' err' : '');
+  clearTimeout(_tt);
+  _tt = setTimeout(() => el.className = '', 3400);
+}
+
+/* VQA — image */
+function handleVqaFile(input) {
+  const f = input.files[0];
+  if (!f) return;
+  vqaFile = f;
+  const preview = document.getElementById('vqa-preview');
+  preview.src = URL.createObjectURL(f);
+  preview.style.display = 'block';
+  document.getElementById('vqa-placeholder').style.display = 'none';
+}
+
+const vqaDrop = document.getElementById('vqa-drop');
+vqaDrop.addEventListener('dragover', e => { e.preventDefault(); vqaDrop.classList.add('dragging'); });
+vqaDrop.addEventListener('dragleave', () => vqaDrop.classList.remove('dragging'));
+vqaDrop.addEventListener('drop', e => {
+  e.preventDefault(); vqaDrop.classList.remove('dragging');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) {
+    vqaFile = f;
+    const p = document.getElementById('vqa-preview');
+    p.src = URL.createObjectURL(f); p.style.display = 'block';
+    document.getElementById('vqa-placeholder').style.display = 'none';
+  }
+});
+
+/* VQA — run */
+async function runVqa() {
+  const question = document.getElementById('vqa-question').value.trim();
+  if (!vqaFile)   { toast('Please upload a medical image first.', true); return; }
+  if (!question)  { toast('Please enter a clinical question.', true); return; }
+
+  const btn = document.getElementById('vqa-btn');
+  btn.classList.add('loading'); btn.disabled = true;
+  setAnswer('idle', 'Processing...');
+
+  const fd = new FormData();
+  fd.append('image', vqaFile, vqaFile.name);
+  fd.append('question', question);
+
+  try {
+    const r = await fetch(API + '/predict', { method: 'POST', body: fd });
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      throw new Error(err.detail || 'Server error ' + r.status);
+    }
+    const d = await r.json();
+    if (d.passed) {
+      setAnswer('pass', d.answer);
+    } else {
+      setAnswer('fail', d.refusal_message || 'This request was refused by the safety guardrail.');
+    }
+  } catch (e) {
+    setAnswer('idle', '');
+    toast(e.message, true);
+  } finally {
+    btn.classList.remove('loading'); btn.disabled = false;
+  }
+}
+
+function setAnswer(state, text) {
+  const box = document.getElementById('answer-box');
+  const txt = document.getElementById('answer-text');
+  box.className = 'answer-box' + (state === 'pass' ? ' pass' : state === 'fail' ? ' fail' : '');
+  txt.className = 'answer-text' + (state === 'idle' || !text ? ' idle' : state === 'fail' ? ' refused' : '');
+  txt.textContent = text || 'Submit an image and question to see the clinical answer.';
+}
+
+/* Triage — images */
+function handleTriageFiles(input) {
+  Array.from(input.files).forEach(addTriageFile);
+  updateCount();
+  input.value = '';
+}
+function addTriageFile(f) {
+  if (triageFiles.some(x => x.name === f.name && x.size === f.size)) return;
+  triageFiles.push(f);
+  const thumbs = document.getElementById('triage-thumbs');
+  const wrap = document.createElement('div'); wrap.className = 'triage-thumb';
+  const img  = document.createElement('img'); img.src = URL.createObjectURL(f); img.alt = f.name;
+  const rm   = document.createElement('button'); rm.className = 'thumb-remove'; rm.textContent = 'x';
+  rm.onclick = () => { triageFiles = triageFiles.filter(x => x !== f); wrap.remove(); updateCount(); };
+  const lbl  = document.createElement('div'); lbl.className = 'triage-fname'; lbl.textContent = f.name;
+  wrap.appendChild(img); wrap.appendChild(rm); wrap.appendChild(lbl);
+  thumbs.appendChild(wrap);
+}
+function updateCount() {
+  const el = document.getElementById('triage-count');
+  el.textContent = triageFiles.length ? `${triageFiles.length} image${triageFiles.length > 1 ? 's' : ''} ready` : '';
+}
+
+const triDrop = document.getElementById('triage-drop');
+triDrop.addEventListener('dragover', e => { e.preventDefault(); triDrop.classList.add('dragging'); });
+triDrop.addEventListener('dragleave', () => triDrop.classList.remove('dragging'));
+triDrop.addEventListener('drop', e => {
+  e.preventDefault(); triDrop.classList.remove('dragging');
+  Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')).forEach(addTriageFile);
+  updateCount();
+});
+
+/* Triage — run */
+async function runTriage() {
+  if (!triageFiles.length) { toast('Upload at least one image.', true); return; }
+  const btn = document.getElementById('triage-btn');
+  btn.classList.add('loading'); btn.disabled = true;
+  const fd = new FormData();
+  triageFiles.forEach(f => fd.append('images', f, f.name));
+  try {
+    const r = await fetch(API + '/triage', { method: 'POST', body: fd });
+    if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.detail||'Server error '+r.status); }
+    renderQueue(await r.json());
+  } catch (e) {
+    toast(e.message, true);
+  } finally {
+    btn.classList.remove('loading'); btn.disabled = false;
+  }
+}
+
+function renderQueue(d) {
+  const list = document.getElementById('queue-list');
+  if (!d.queue || !d.queue.length) {
+    list.innerHTML = '<div class="empty-state">No results returned.</div>';
+    return;
+  }
+
+  const accepted = d.queue.filter(x => !x.refused);
+  const refused  = d.queue.filter(x =>  x.refused);
+  const refusedNote = refused.length ? ` · ${refused.length} refused` : '';
+  toast(`Sorted ${accepted.length} image${accepted.length !== 1 ? 's' : ''} in ${d.latency_ms}ms${refusedNote}`);
+  list.innerHTML = '';
+
+  // Accepted — sorted abnormality queue
+  accepted.forEach((item, i) => {
+    const abn = item.is_abnormal;
+    const pct = Math.round(item.score * 100);
+    const el  = document.createElement('div');
+    el.className = `queue-item${abn ? ' abnormal' : ''}`;
+    el.style.animationDelay = (i * 50) + 'ms';
+    el.innerHTML = `
+      <div class="queue-rank ${i===0?'r1':i===1?'r2':''}">${i+1}</div>
+      <div class="queue-info">
+        <div class="queue-filename">${item.filename}</div>
+        <div class="score-row">
+          <div class="score-bar"><div class="score-fill" style="width:0%" data-w="${pct}%"></div></div>
+          <div class="score-pct">${pct}%</div>
+        </div>
+      </div>
+      <div class="badge${abn ? ' abnormal' : ''}">${abn ? 'ABNORMAL' : 'NORMAL'}</div>
+    `;
+    list.appendChild(el);
+    setTimeout(() => el.querySelectorAll('.score-fill').forEach(b => b.style.width = b.dataset.w), 80 + i * 50);
+  });
+
+  // Refused — dimmed section at the bottom
+  if (refused.length) {
+    const divider = document.createElement('div');
+    divider.style.cssText = 'font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);padding:14px 0 6px;';
+    divider.textContent = 'Refused by guardrail';
+    list.appendChild(divider);
+    refused.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'queue-item refused-item';
+      el.innerHTML = `
+        <div class="queue-rank">—</div>
+        <div class="queue-info"><div class="queue-filename">${item.filename}</div><div style="font-size:.75rem;color:var(--text-muted);margin-top:3px;">Not a medical image</div></div>
+        <div class="badge refused">REFUSED</div>
+      `;
+      list.appendChild(el);
+    });
+  }
+}
+</script>
+</body>
+</html>

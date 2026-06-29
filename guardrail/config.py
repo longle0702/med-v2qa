@@ -10,65 +10,76 @@ from __future__ import annotations
 
 import os
 
-# ---------------------------------------------------------------------------
-# Gate 1 – Text Intent Classifier
-# ---------------------------------------------------------------------------
-
-# HuggingFace zero-shot pipeline model.
-# Using facebook/bart-large-mnli: strong NLI model, works offline after
-# first download, ~400 MB. Switch to 'cross-encoder/nli-MiniLM2-L6-H768'
-# for a much faster, lighter (~80 MB) alternative.
-INTENT_MODEL_NAME: str = "facebook/bart-large-mnli"
-
-# Candidate labels used for the "medical" hypothesis.
-MEDICAL_CANDIDATE_LABELS: list[str] = [
-    "medical question",
-    "radiology question",
-    "clinical diagnosis",
-    "patient symptom",
-    "anatomy question",
-    "pathology question",
+MEDICAL_SEED_TOKENS: list[str] = [
+    # Closed-ended VQA staples
+    "yes", "no",
+    # Radiology findings
+    "abnormal", "normal", "opacity", "consolidation", "effusion",
+    "pneumonia", "cardiomegaly", "atelectasis", "edema", "infiltrate",
+    "pneumothorax", "nodule", "mass", "fracture", "lesion",
+    # Anatomy (Advanced)
+    "lung", "lungs", "chest", "heart", "liver", "kidney", "spine",
+    "pleural", "bilateral", "unilateral", "mediastinum", "diaphragm",
+    # Clinical terms
+    "enlarged", "increased", "decreased", "present", "absent",
+    "mild", "moderate", "severe", "acute", "chronic",
+    "calcification", "density", "opaque", "lucent",
+    # Simple / Layman Terms (What patients actually ask about)
+    "pain", "hurt", "broken", "break", "spot", "shadow", "bleed", 
+    "bleeding", "swelling", "swollen", "lump", "bump", "hole", "tear", 
+    "fluid", "blood", "cough", "ache", "injury", "sick", "wrong",
+    # Simple Anatomy (Basic body parts)
+    "bone", "bones", "rib", "ribs", "neck", "head", "brain", "skull", 
+    "stomach", "belly", "gut", "arm", "leg", "shoulder", "knee", "hip", 
+    "back", "throat", "joint", "muscle", "artery", "vein",
+    # Imaging Modalities & Technical Meta-words 
+    "xray", "ray", "ct", "mri", "scan", "ultrasound", "echo", "image", 
+    "film", "view", "axial", "sagittal", "coronal", "contrast",
+    # Visual Descriptors (Common in VQA answering patterns)
+    "white", "black", "grey", "gray", "dark", "bright", "clear", 
+    "blurry", "cloudy", "line", "lines", "circle", "round", "side", 
+    "left", "right", "top", "bottom", "upper", "lower", "middle"
 ]
 
-# Candidate labels used for the "non-medical" hypothesis.
-NON_MEDICAL_CANDIDATE_LABELS: list[str] = [
-    "general knowledge",
-    "entertainment",
-    "cooking",
-    "politics",
-    "sports",
-    "technology",
-]
-
-# Minimum aggregated score the *medical* hypothesis must achieve.
-# Below this value Gate 1 fires and the request is refused.
+# Minimum cumulative probability mass over medical seed tokens required
+# for Gate 1 to pass.
 # Tuning guide:
-#   0.40 → permissive (almost no false rejections on ambiguous queries)
-#   0.55 → default   (good balance, rejects clearly non-medical)
-#   0.70 → strict    (may reject borderline clinical terminology)
-INTENT_THRESHOLD: float = 0.30
+#   0.05 → very permissive (almost no false rejections)
+#   0.10 → default         (good balance; rejects clearly non-medical text)
+#   0.20 → strict          (may reject short or ambiguous clinical questions)
+INTENT_THRESHOLD: float = 0.10
 
 # ---------------------------------------------------------------------------
-# Gate 2 – Softmax Confidence Gate
+# Gate 2 – CLIP Medical Image Classifier
 # ---------------------------------------------------------------------------
 
-# Top-1 Softmax probability at the first decoder step must exceed this
-# threshold for the image to be considered a valid medical scan.
+# Local directory where openai/clip-vit-base-patch32 weights are stored.
+# Download once with:
+#   from transformers import CLIPModel, CLIPProcessor
+#   CLIPModel.from_pretrained("openai/clip-vit-base-patch32").save_pretrained(CLIP_MODEL_PATH)
+#   CLIPProcessor.from_pretrained("openai/clip-vit-baxse-patch32").save_pretrained(CLIP_MODEL_PATH)
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CLIP_MODEL_PATH: str = os.path.join(_REPO_ROOT, "guardrail", "clip_model")
+
+# Minimum summed softmax score across all medical prompts for Gate 2 to pass.
+# CLIP distributes probability across 10 medical + 10 non-medical prompts;
+# a pure random image scores ~0.50, real medical images typically score >0.65.
 # Tuning guide:
-#   0.20 → very permissive (almost no images refused)
-#   0.30 → default         (catches natural photos, cartoons, blank images)
-#   0.45 → strict          (may refuse low-quality or unusual scans)
-#   0.60 → very strict     (only high-confidence medical images pass)
-CONFIDENCE_THRESHOLD: float = 0.30
+#   0.45 → permissive  (flags only obviously non-medical images)
+#   0.55 → default     (good balance; rejects pets, nature photos, selfies)
+#   0.70 → strict      (may reject low-quality or atypical scans)
+CLIP_THRESHOLD: float = 0.55
+
+# Kept for backward-compat with any code that imports these names.
+CONFIDENCE_THRESHOLD: float = CLIP_THRESHOLD
+TRIAGE_YES_THRESHOLD: float = CLIP_THRESHOLD
 
 # ---------------------------------------------------------------------------
 # VQA Model paths (mirrors inference.py — kept here so guardrail/ is
 # self-contained and does not hard-code paths in multiple places)
 # ---------------------------------------------------------------------------
 
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-CHECKPOINT_PATH: str = os.path.join(_REPO_ROOT, "med_pretrain_29_rad_34.pth")
+CHECKPOINT_PATH: str = os.path.join(_REPO_ROOT, "med_pretrain_29_rad_31.pth")
 CONFIG_PATH: str = os.path.join(_REPO_ROOT, "configs", "VQA.yaml")
 TEXT_ENCODER: str = "bert-base-uncased"
 TEXT_DECODER: str = "bert-base-uncased"

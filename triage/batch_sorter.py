@@ -16,7 +16,13 @@ logger = logging.getLogger(__name__)
 
 
 class BatchTriageService:
-    def __init__(self, device: str = None):
+    def __init__(
+        self,
+        device: str = None,
+        preloaded_model=None,
+        preloaded_tokenizer=None,
+        preloaded_transform=None,
+    ):
         if device is None:
             self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         else:
@@ -27,7 +33,14 @@ class BatchTriageService:
         self._transform = None
         
         # The baseline query to evaluate abnormality
-        self.query = "Are there abnormalities in this image?"
+        self.query = "Does this image has any abnormalities?"
+
+        # If the caller already loaded the model (e.g. API startup), skip load.
+        if preloaded_model is not None:
+            self._model = preloaded_model
+            self._tokenizer = preloaded_tokenizer
+            self._transform = preloaded_transform
+            logger.info("BatchTriageService: using pre-loaded MUMC model.")
 
     def _load(self):
         if self._model is not None:

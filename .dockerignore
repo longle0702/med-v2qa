@@ -1,0 +1,15 @@
+# Don't copy the large checkpoint into the Docker build context
+med_pretrain_29_rad_34.pth
+
+# Don't copy pre-exported ONNX models (mounted at runtime)
+onnx_models/
+
+# Misc
+.git
+.DS_Store
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv

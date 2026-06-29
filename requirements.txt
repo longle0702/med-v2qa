@@ -9,3 +9,13 @@ scipy==1.8.0
 scikit-image==0.19.2
 matplotlib==3.4.3
 ruamel.yaml==0.19.1
+
+# API server
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9
+aiofiles>=23.0.0
+
+# ONNX acceleration
+onnx>=1.16.0
+onnxruntime>=1.18.0
