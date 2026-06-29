@@ -1,7 +1,7 @@
 """
 triage/batch_sorter.py
 ----------------------
-Implements the VQA-driven batch triage sorting feature.
+Implements the batch triage sorting feature using CLIP zero-shot classification.
 """
 from typing import List, Dict
 import logging
@@ -9,16 +9,32 @@ import torch
 import time
 from PIL import Image
 
-# Import existing inference utilities
-from inference import load_model, pre_question
+from transformers import CLIPModel, CLIPProcessor
+import torch.nn.functional as F
+from guardrail.config import CLIP_MODEL_PATH
 
 logger = logging.getLogger(__name__)
+
+_ABNORMAL_PROMPTS = [
+    "an abnormal medical scan",
+    "a medical scan showing pathology",
+    "an X-ray showing disease",
+    "a clinical image with abnormalities",
+]
+
+_NORMAL_PROMPTS = [
+    "a normal medical scan",
+    "a healthy medical scan",
+    "an X-ray with no abnormalities",
+    "a healthy clinical image",
+]
 
 
 class BatchTriageService:
     def __init__(
         self,
         device: str = None,
+        # Kept for compatibility but ignored
         preloaded_model=None,
         preloaded_tokenizer=None,
         preloaded_transform=None,
@@ -28,31 +44,23 @@ class BatchTriageService:
         else:
             self.device = torch.device(device)
             
-        self._model = None
-        self._tokenizer = None
-        self._transform = None
-        
-        # The baseline query to evaluate abnormality
-        self.query = "Does this image has any abnormalities?"
-
-        # If the caller already loaded the model (e.g. API startup), skip load.
-        if preloaded_model is not None:
-            self._model = preloaded_model
-            self._tokenizer = preloaded_tokenizer
-            self._transform = preloaded_transform
-            logger.info("BatchTriageService: using pre-loaded MUMC model.")
+        self._clip_model = None
+        self._clip_processor = None
+        self.model_path = CLIP_MODEL_PATH
 
     def _load(self):
-        if self._model is not None:
+        if self._clip_model is not None:
             return
             
-        logger.info("Loading MUMC VQA model for batch triage on %s...", self.device)
-        self._model, self._tokenizer, self._transform = load_model(self.device)
-        logger.info("Batch triage model loaded successfully.")
+        logger.info("Loading CLIP model for batch triage on %s...", self.device)
+        self._clip_model = CLIPModel.from_pretrained(self.model_path).to(self.device)
+        self._clip_model.eval()
+        self._clip_processor = CLIPProcessor.from_pretrained(self.model_path)
+        logger.info("Batch triage CLIP model loaded successfully.")
 
     def sort_batch(self, image_paths: List[str]) -> List[Dict]:
         """
-        Takes a list of image paths, runs batched VQA inference to evaluate 
+        Takes a list of image paths, runs batched CLIP inference to evaluate 
         abnormalities, and returns a sorted queue.
         
         Returns:
@@ -67,73 +75,66 @@ class BatchTriageService:
         t0 = time.perf_counter()
         
         # 1. Preprocess images
-        image_tensors = []
+        images = []
+        valid_paths = []
         for p in image_paths:
             try:
                 img = Image.open(p).convert('RGB')
-                image_tensors.append(self._transform(img))
+                images.append(img)
+                valid_paths.append(p)
             except Exception as e:
                 logger.error("Failed to load image %s: %s", p, e)
-                # Fallback zero tensor if image fails to load
-                image_tensors.append(torch.zeros(3, 256, 256))
-                
-        image_tensor_batch = torch.stack(image_tensors).to(self.device)
+                # We skip failed images here or handle them with score 0
         
-        # 2. Preprocess text query
-        processed_q = pre_question(self.query, 50)
-        queries = [processed_q] * len(image_paths)
-        q_enc = self._tokenizer(
-            queries,
-            padding='longest',
-            truncation=True,
-            max_length=25,
-            return_tensors='pt',
-        ).to(self.device)
-        
-        # 3. Batched Inference to extract Softmax probs
+        if not images:
+            return []
+
+        all_prompts = _ABNORMAL_PROMPTS + _NORMAL_PROMPTS
+
+        # 2. Batched Inference
         with torch.no_grad():
-            image_embeds = self._model.visual_encoder(image_tensor_batch)
-            image_atts = torch.ones(image_embeds.size()[:-1], dtype=torch.long).to(self.device)
-            
-            question_output = self._model.text_encoder(
-                q_enc.input_ids,
-                attention_mask=q_enc.attention_mask,
-                encoder_hidden_states=image_embeds,
-                encoder_attention_mask=image_atts,
-                return_dict=True,
+            inputs = self._clip_processor(
+                text=all_prompts,
+                images=images,
+                return_tensors="pt",
+                padding=True,
             )
+            inputs = {k: v.to(self.device) for k, v in inputs.items()}
             
-            bos_ids = torch.tensor([[self._tokenizer.cls_token_id]] * len(image_paths), device=self.device)
+            outputs = self._clip_model(**inputs)
             
-            decoder_output = self._model.text_decoder(
-                bos_ids,
-                encoder_hidden_states=question_output.last_hidden_state,
-                encoder_attention_mask=q_enc.attention_mask,
-                return_dict=True,
-            )
+            # logits_per_image: (batch_size, num_prompts)
+            logits = outputs.logits_per_image
+            probs = F.softmax(logits, dim=1)
             
-            logits = decoder_output.logits[:, 0, :]
-            probs = torch.softmax(logits, dim=-1)
-            
-            yes_id = self._tokenizer.convert_tokens_to_ids("yes")
-            no_id = self._tokenizer.convert_tokens_to_ids("no")
+            n_abnormal = len(_ABNORMAL_PROMPTS)
             
             results = []
-            for i in range(len(image_paths)):
-                p_yes = probs[i, yes_id].item()
-                p_no = probs[i, no_id].item()
+            for i, p in enumerate(valid_paths):
+                # Sum probabilities for abnormal and normal classes
+                abnormal_score = probs[i, :n_abnormal].sum().item()
+                normal_score = probs[i, n_abnormal:].sum().item()
                 
-                # Normalize probability to 0-1 range considering only yes/no
-                score = p_yes / (p_yes + p_no + 1e-9)
+                # Normalize probability to 0-1 range
+                score = abnormal_score / (abnormal_score + normal_score + 1e-9)
                 
-                # Threshold for binary display (though queue is sorted continuously)
+                # Threshold for binary display
                 is_abnormal = score > 0.5
                 
                 results.append({
-                    "image_path": image_paths[i],
+                    "image_path": p,
                     "score": score,
                     "is_abnormal": is_abnormal
                 })
+                
+        # Add failed images with score 0
+        failed_paths = set(image_paths) - set(valid_paths)
+        for p in failed_paths:
+            results.append({
+                "image_path": p,
+                "score": 0.0,
+                "is_abnormal": False
+            })
         
         t1 = time.perf_counter()
         logger.info("Batch processed %d images in %.2f seconds.", len(image_paths), t1 - t0)

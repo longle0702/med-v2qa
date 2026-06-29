@@ -79,15 +79,11 @@ async def lifespan(app: FastAPI):
     )
     logger.info("GuardrailPipeline ready.")
 
-    # 3. Triage service — inject pre-loaded model (no double load)
+    # 3. Triage service — uses local CLIP model
     from triage.batch_sorter import BatchTriageService  # noqa: PLC0415
-    _triage = BatchTriageService(
-        preloaded_model=_engine.model,
-        preloaded_tokenizer=_engine.tokenizer,
-        preloaded_transform=_engine.transform,
-    )
-    _triage.device = _engine.device   # keep device consistent
+    _triage = BatchTriageService(device=_engine.device)
     logger.info("BatchTriageService ready.")
+
 
     logger.info("═" * 60)
     logger.info("  All components initialised — server is ready.")
