@@ -2,20 +2,16 @@ torch==2.8.0
 torchvision==0.23.0
 timm==0.4.12
 transformers==4.26.1
-Pillow==11.3.0
-numpy==1.21.1
-opencv-python==4.5.5.62
-scipy==1.8.0
-scikit-image==0.19.2
-matplotlib==3.4.3
+Pillow
+numpy
+opencv-python
+scipy
+scikit-image
+matplotlib
 ruamel.yaml==0.19.1
-
-# API server
 fastapi>=0.111.0
 uvicorn[standard]>=0.29.0
 python-multipart>=0.0.9
 aiofiles>=23.0.0
-
-# ONNX acceleration
 onnx>=1.16.0
 onnxruntime>=1.18.0
