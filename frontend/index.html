@@ -335,6 +335,42 @@
     }
     #toast.show { transform: translateY(0); opacity: 1; }
     #toast.err  { border-color: rgba(255,255,255,.35); color: var(--white); }
+    /* ─── Voice button ────────────────────────────────────────────── */
+    .query-row {
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .query-row textarea { flex: 1; }
+    .voice-btn {
+      flex-shrink: 0;
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 1px solid var(--border-bright);
+      background: var(--bg-input); color: var(--text-secondary);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+      margin-top: 0;
+    }
+    .voice-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+    .voice-btn:hover:not(:disabled) {
+      border-color: var(--white); color: var(--white);
+      box-shadow: 0 0 16px var(--white-glow);
+    }
+    .voice-btn.recording {
+      border-color: #ff4444;
+      background: rgba(255,68,68,.12);
+      color: #ff6666;
+      animation: mic-pulse 1.2s ease-in-out infinite;
+    }
+    .voice-btn:disabled { opacity: .35; cursor: not-allowed; }
+    @keyframes mic-pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,68,68,.4); }
+      50%      { box-shadow: 0 0 0 8px rgba(255,68,68,0); }
+    }
+    #voice-status {
+      font-size: .72rem; color: var(--text-muted);
+      min-height: 1.2em; margin-top: 6px;
+      letter-spacing: .04em;
+    }
+    #voice-status.err { color: #ff6666; }
   </style>
 </head>
 <body>
@@ -384,7 +420,19 @@
         <div class="card-title">Clinical Query</div>
         <div class="form-group">
           <label>Question</label>
-          <textarea id="vqa-question" placeholder="e.g. Describe the lung abnormalities visible in this scan." style="min-height:148px;"></textarea>
+          <div class="query-row">
+            <textarea id="vqa-question" placeholder="e.g. Describe the lung abnormalities visible in this scan." style="min-height:148px;"></textarea>
+            <button id="voice-btn" class="voice-btn" title="Dictate question" onclick="toggleRecording()">
+              <!-- microphone icon -->
+              <svg viewBox="0 0 24 24">
+                <rect x="9" y="2" width="6" height="11" rx="3"/>
+                <path d="M5 10a7 7 0 0 0 14 0"/>
+                <line x1="12" y1="19" x2="12" y2="22"/>
+                <line x1="8" y1="22" x2="16" y2="22"/>
+              </svg>
+            </button>
+          </div>
+          <div id="voice-status"></div>
         </div>
         <button class="btn-primary" id="vqa-btn" onclick="runVqa()">
           <div class="spinner"></div>
@@ -619,7 +667,7 @@ function renderQueue(d) {
     el.className = `queue-item${abn ? ' abnormal' : ''}`;
     el.style.animationDelay = (i * 50) + 'ms';
     el.innerHTML = `
-      <div class="queue-rank ${i===0?'r1':i===1?'r2':''}">${i+1}</div>
+      <div class="queue-rank ${i===0?'r1':i===1?'r2':''}">${ i+1}</div>
       <div class="queue-info">
         <div class="queue-filename">${item.filename}</div>
         <div class="score-row">
@@ -651,6 +699,107 @@ function renderQueue(d) {
     });
   }
 }
+
+/* ── VoiceRecorder ─────────────────────────────────────────────────────── */
+(function () {
+  const MAX_RECORD_MS = 60_000; // auto-stop after 60 s
+  let mediaRecorder = null;
+  let audioChunks   = [];
+  let stopTimer     = null;
+  let stream        = null;
+
+  // Preferred MIME type — WebM/Opus is supported in Chrome & Firefox
+  const MIME = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+    ? 'audio/webm;codecs=opus'
+    : 'audio/webm';
+
+  function setStatus(msg, isErr = false) {
+    const el = document.getElementById('voice-status');
+    el.textContent = msg;
+    el.className   = isErr ? 'err' : '';
+  }
+
+  function setBtn(state) {
+    // state: 'idle' | 'recording' | 'transcribing'
+    const btn = document.getElementById('voice-btn');
+    btn.classList.remove('recording');
+    btn.disabled = false;
+    if (state === 'recording')    { btn.classList.add('recording'); }
+    if (state === 'transcribing') { btn.disabled = true; }
+  }
+
+  async function getStream() {
+    if (stream && stream.active) return stream;
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    return stream;
+  }
+
+  async function startRecording() {
+    try {
+      const s = await getStream();
+      audioChunks = [];
+      mediaRecorder = new MediaRecorder(s, { mimeType: MIME });
+      mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+      mediaRecorder.onstop = onRecordingStop;
+      mediaRecorder.start();
+      setBtn('recording');
+      setStatus('Recording… click again to stop');
+      stopTimer = setTimeout(stopRecording, MAX_RECORD_MS);
+    } catch (err) {
+      setStatus('Microphone access denied.', true);
+      toast('Microphone access denied.', true);
+    }
+  }
+
+  function stopRecording() {
+    clearTimeout(stopTimer);
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+    }
+  }
+
+  async function onRecordingStop() {
+    setBtn('transcribing');
+    setStatus('Transcribing…');
+    const blob = new Blob(audioChunks, { type: MIME });
+    audioChunks = [];
+
+    const fd = new FormData();
+    fd.append('audio', blob, 'recording.webm');
+
+    try {
+      const res = await fetch(API + '/transcribe', { method: 'POST', body: fd });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || 'Transcription failed (' + res.status + ')');
+      }
+      const data = await res.json();
+      const ta   = document.getElementById('vqa-question');
+      // Append with a space if textarea already has content
+      const sep  = ta.value.trim() ? ' ' : '';
+      ta.value  += sep + data.transcript;
+      setStatus(`Transcribed in ${data.duration_ms.toFixed(0)} ms`);
+      setBtn('idle');
+    } catch (err) {
+      setStatus(err.message, true);
+      toast(err.message, true);
+      setBtn('idle');
+    }
+  }
+
+  // Public toggle attached to the button's onclick
+  window.toggleRecording = function () {
+    if (!navigator.mediaDevices || !window.MediaRecorder) {
+      toast('Your browser does not support microphone recording.', true);
+      return;
+    }
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  };
+}());
 </script>
 </body>
 </html>

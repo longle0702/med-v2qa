@@ -93,3 +93,19 @@ class TriageResponse(BaseModel):
     total_images: int
     backend: Literal["onnx", "pytorch"]
     latency_ms: float = Field(..., description="Total triage pipeline latency in ms.")
+
+
+# ---------------------------------------------------------------------------
+# /transcribe
+# ---------------------------------------------------------------------------
+
+class TranscribeResponse(BaseModel):
+    """
+    Response for POST /transcribe.
+
+    ``transcript`` contains the Whisper-recognised text ready to populate
+    the clinical query textarea on the frontend.
+    """
+
+    transcript: str = Field(..., description="Recognised speech text.")
+    duration_ms: float = Field(..., description="End-to-end transcription latency in ms.")

@@ -24,16 +24,20 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated, List, Optional
 
+import librosa
+import torch
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
+from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor
 
 from api.engine import InferenceEngine
 from api.schemas import (
     GateDetail,
     HealthResponse,
     PredictResponse,
+    TranscribeResponse,
     TriageItem,
     TriageResponse,
 )
@@ -50,6 +54,8 @@ logger = logging.getLogger(__name__)
 _engine: Optional[InferenceEngine] = None
 _guardrail = None      # GuardrailPipeline
 _triage = None         # BatchTriageService
+_whisper_processor = None  # AutoProcessor  (openai/whisper-base.en)
+_whisper_model = None      # AutoModelForSpeechSeq2Seq (openai/whisper-base.en)
 
 
 # ---------------------------------------------------------------------------
@@ -84,6 +90,15 @@ async def lifespan(app: FastAPI):
     _triage = BatchTriageService(device=_engine.device)
     logger.info("BatchTriageService ready.")
 
+
+    # 4. Whisper speech-to-text (local model — no API key required)
+    global _whisper_processor, _whisper_model
+    _WHISPER_MODEL_ID = "openai/whisper-base.en"
+    logger.info("Loading Whisper model '%s' …", _WHISPER_MODEL_ID)
+    _whisper_processor = AutoProcessor.from_pretrained(_WHISPER_MODEL_ID)
+    _whisper_model = AutoModelForSpeechSeq2Seq.from_pretrained(_WHISPER_MODEL_ID)
+    _whisper_model.eval()
+    logger.info("WhisperEngine ready  (model=%s)", _WHISPER_MODEL_ID)
 
     logger.info("═" * 60)
     logger.info("  All components initialised — server is ready.")
@@ -344,4 +359,76 @@ async def triage(
         total_images=len(queue),
         backend=_engine.backend,
         latency_ms=round(latency_ms, 1),
+    )
+
+
+# ---------------------------------------------------------------------------
+# POST /transcribe  — speech-to-text via local Whisper
+# ---------------------------------------------------------------------------
+
+@app.post(
+    "/transcribe",
+    response_model=TranscribeResponse,
+    summary="Transcribe audio clip to text using Whisper (local model)",
+    tags=["Voice"],
+)
+async def transcribe(
+    audio: Annotated[
+        UploadFile,
+        File(description="Audio clip recorded by the browser (WebM/Opus)."),
+    ],
+):
+    """
+    Accepts a WebM/Opus audio blob from the frontend's MediaRecorder API,
+    decodes it to a 16 kHz mono waveform with ``librosa``, and runs
+    ``openai/whisper-base.en`` locally to produce a text transcript.
+
+    The transcript is returned directly and can be injected into the
+    clinical query textarea without any manual typing.
+    """
+    if _whisper_model is None or _whisper_processor is None:
+        raise HTTPException(status_code=503, detail="Whisper model not yet loaded.")
+
+    audio_bytes = await audio.read()
+    if not audio_bytes:
+        raise HTTPException(status_code=422, detail="Audio file is empty.")
+
+    t_start = time.perf_counter()
+
+    # Write the browser blob to a temp file so librosa can decode it via ffmpeg
+    suffix = os.path.splitext(audio.filename or ".webm")[1] or ".webm"
+    with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
+        tmp.write(audio_bytes)
+        tmp_path = tmp.name
+
+    try:
+        # Decode to 16 kHz mono float32 numpy array
+        waveform, _ = librosa.load(tmp_path, sr=16000, mono=True)
+    finally:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+
+    # Prepare model inputs
+    inputs = _whisper_processor(
+        waveform,
+        sampling_rate=16000,
+        return_tensors="pt",
+    )
+
+    # Run inference (CPU; no grad needed)
+    with torch.no_grad():
+        predicted_ids = _whisper_model.generate(inputs["input_features"])
+
+    transcript = _whisper_processor.batch_decode(
+        predicted_ids, skip_special_tokens=True
+    )[0].strip()
+
+    duration_ms = (time.perf_counter() - t_start) * 1000
+    logger.info("Transcribed %.1f ms: %r", duration_ms, transcript[:80])
+
+    return TranscribeResponse(
+        transcript=transcript,
+        duration_ms=round(duration_ms, 1),
     )
