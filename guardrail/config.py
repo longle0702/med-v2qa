@@ -53,13 +53,9 @@ INTENT_THRESHOLD: float = 0.20
 # Gate 2 – CLIP Medical Image Classifier
 # ---------------------------------------------------------------------------
 
-# Local directory where openai/clip-vit-base-patch32 weights are stored.
-# Download once with:
-#   from transformers import CLIPModel, CLIPProcessor
-#   CLIPModel.from_pretrained("openai/clip-vit-base-patch32").save_pretrained(CLIP_MODEL_PATH)
-#   CLIPProcessor.from_pretrained("openai/clip-vit-baxse-patch32").save_pretrained(CLIP_MODEL_PATH)
+# Use the HuggingFace Hub directly instead of a local directory.
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CLIP_MODEL_PATH: str = os.path.join(_REPO_ROOT, "guardrail", "clip_model")
+CLIP_MODEL_PATH: str = "openai/clip-vit-base-patch32"
 
 # Minimum summed softmax score across all medical prompts for Gate 2 to pass.
 # CLIP distributes probability across 10 medical + 10 non-medical prompts;
