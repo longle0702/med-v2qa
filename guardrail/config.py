@@ -15,7 +15,7 @@ MEDICAL_SEED_TOKENS: list[str] = [
     "abnormal", "normal", "opacity", "consolidation", "effusion",
     "pneumonia", "cardiomegaly", "atelectasis", "edema", "infiltrate",
     "pneumothorax", "nodule", "mass", "fracture", "lesion",
-    # Anatomy (Advanced)
+    # Anatomy
     "lung", "lungs", "chest", "heart", "liver", "kidney", "spine",
     "pleural", "bilateral", "unilateral", "mediastinum", "diaphragm",
     # Clinical terms
@@ -36,7 +36,9 @@ MEDICAL_SEED_TOKENS: list[str] = [
     # Visual Descriptors (Common in VQA answering patterns)
     "white", "black", "grey", "gray", "dark", "bright", "clear",
     "blurry", "cloudy", "line", "lines", "circle", "round", "side",
-    "left", "right", "top", "bottom", "upper", "lower", "middle"
+    "left", "right", "top", "bottom", "upper", "lower", "middle",
+    # Additional dataset-specific findings and anatomy
+    "abcess", "abdomen", "abdominal", "abscess", "adenopathy", "adjacent", "air", "anterior", "aorta", "appendix", "ascending", "ascites", "asymmetric", "atherosclerotic", "basal", "base", "basilar", "biconvex", "biopsy", "blunting", "bowel", "breasts", "bronchiectasis", "bullous", "calcifications", "calcified", "cancer", "cardiac", "cardiopulmonary", "cardiovascular", "cartilage", "catheter", "caudate", "cavum", "cecum", "central", "cerebellum", "cerebrum", "choroid", "cirrhosis", "cns", "concave", "congenital", "cortical", "costophrenic", "crescent", "csf", "cva", "cxr", "cystic", "descending", "diffuse", "diffusion", "distal", "diverticuli", "diverticulitis", "dwi", "edematous", "elliptical", "embolus", "emphysema", "enhancement", "epidural", "exophytic", "extraluminal", "extremities", "fat", "fatty", "flair", "focal", "frontal", "gadolinium", "gallbladder", "gallstones", "gastrointestinal", "genetic", "haustra", "hemorrhage", "hepatocellular", "heterogeneous", "horsehoe", "hydrocephalus", "hydropneumothorax", "hyperintense", "hyperintensity", "hypodense", "hypointense", "hypoxic", "infarct", "infarcted", "infarcts", "infection", "infiltrative", "intestine", "irregular", "ischemia", "isointense", "ivc", "jejunum", "kidneys", "lateral", "lentiform", "location", "loculated", "maxillary", "medial", "mediport", "metastases", "metastasis", "micronodular", "multilobulated", "necrosis", "necrotic", "nephroblastomatosis", "nipple", "nodular", "nodules", "nucleus", "occipital", "oculomotor", "omental", "pacemaker", "pancreas", "pancreatic", "parasitic", "paratracheal", "parietal", "periappendiceal", "pericholecystic", "peritoneum", "pineal", "pituitary", "plicae", "pons", "portal", "psoas", "pulmonary", "punctate", "quadrantopia", "radiolucent", "respiratory", "retrocardiac", "retroperitoneum", "ruq", "sacroiliac", "scoliosis", "sella", "shrunken", "sigmoid", "sinusitis", "spleen", "splenule", "sternal", "sternotomy", "stones", "subarachnoid", "sulcal", "suprasellar", "temporal", "thalami", "thickening", "toxoplasma", "tumors", "ureteral", "varicocele", "vascular", "vasculature", "ventricle", "viral", "weighted"
 ]
 
 # Minimum cumulative probability mass over medical seed tokens required
