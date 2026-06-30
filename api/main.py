@@ -70,7 +70,7 @@ async def lifespan(app: FastAPI):
     logger.info("  Med-V²QA API — startup")
     logger.info("═" * 60)
 
-    # 1. Load shared inference engine (checkpoint + optional ONNX sessions)
+    # 1. Load shared inference engine (checkpoint)
     _engine = InferenceEngine()
     logger.info("InferenceEngine ready  (backend=%s, device=%s)",
                 _engine.backend, _engine.device)
@@ -203,7 +203,7 @@ async def predict(
 
     - **Gate 1 (intent)** — rejects non-medical questions before the image is processed.
     - **Gate 2 (confidence)** — rejects non-medical images based on Softmax confidence.
-    - **VQA inference** — beam-search decoding via the MUMC model (ONNX-accelerated encoders).
+    - **VQA inference** — beam-search decoding via the MUMC model.
     """
     _require_engine()
     t_start = time.perf_counter()

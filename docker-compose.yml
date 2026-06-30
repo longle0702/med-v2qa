@@ -12,8 +12,6 @@ services:
     volumes:
       # Mount the 2.2 GB checkpoint read-only (not baked into image)
       - ./med_pretrain_29_rad_34.pth:/app/med_pretrain_29_rad_34.pth:ro
-      # Mount pre-exported ONNX models (optional — falls back to PyTorch)
-      - ./onnx_models:/app/onnx_models:ro
     environment:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped

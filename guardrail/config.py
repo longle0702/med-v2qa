@@ -47,7 +47,7 @@ MEDICAL_SEED_TOKENS: list[str] = [
 #   0.05 → very permissive (almost no false rejections)
 #   0.10 → default         (good balance; rejects clearly non-medical text)
 #   0.20 → strict          (may reject short or ambiguous clinical questions)
-INTENT_THRESHOLD: float = 0.10
+INTENT_THRESHOLD: float = 0.20
 
 # ---------------------------------------------------------------------------
 # Gate 2 – CLIP Medical Image Classifier
@@ -68,7 +68,7 @@ CLIP_MODEL_PATH: str = os.path.join(_REPO_ROOT, "guardrail", "clip_model")
 #   0.45 → permissive  (flags only obviously non-medical images)
 #   0.55 → default     (good balance; rejects pets, nature photos, selfies)
 #   0.70 → strict      (may reject low-quality or atypical scans)
-CLIP_THRESHOLD: float = 0.55
+CLIP_THRESHOLD: float = 0.60
 
 # Kept for backward-compat with any code that imports these names.
 CONFIDENCE_THRESHOLD: float = CLIP_THRESHOLD
@@ -79,7 +79,7 @@ TRIAGE_YES_THRESHOLD: float = CLIP_THRESHOLD
 # self-contained and does not hard-code paths in multiple places)
 # ---------------------------------------------------------------------------
 
-CHECKPOINT_PATH: str = os.path.join(_REPO_ROOT, "med_pretrain_29_rad_31.pth")
+CHECKPOINT_PATH: str = os.path.join(_REPO_ROOT, "med_pretrain_29_rad_34.pth")
 CONFIG_PATH: str = os.path.join(_REPO_ROOT, "configs", "VQA.yaml")
 TEXT_ENCODER: str = "bert-base-uncased"
 TEXT_DECODER: str = "bert-base-uncased"

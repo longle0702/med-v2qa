@@ -10,8 +10,8 @@ Med V-Squared QA is an interactive clinical tool designed to streamline medical 
 
 - **Owner:** Long
 - **Description:** The primary multimodal engine. A user uploads a medical image and submits a query. The LLM processes both input data and generates a response.
-- **Model Usage:** Uses the MUMC architecture (converted to ONNX) to process multimodal inputs (medical image + text query) and generate clinical answers.
-- **Technical Requirements:** PyTorch model conversion to ONNX for accelerated inference, FastAPI endpoint integration.
+- **Model Usage:** Uses the PyTorch MUMC architecture to process multimodal inputs (medical image + text query) and generate clinical answers.
+- **Technical Requirements:** FastAPI endpoint integration.
 - **Complexity:** Complex (1.5 - 2 days)
 
 ### Feature 2: Dual-Gate Medical Guardrail (Refusal System)
@@ -72,7 +72,7 @@ Med V-Squared QA is an interactive clinical tool designed to streamline medical 
 
 - **Frontend:** React or Next.js (Deployed via Vercel)
 - **Backend:** Python, FastAPI (Deployed via Railway or Render)
-- **ML Deployment & Optimization:** ONNX Runtime
+- **ML Deployment & Optimization:** PyTorch
 - **Containerization:** **Docker** & Docker Compose
 - **External APIs & Models:** OpenAI Whisper API, Tesseract OCR
 - **External Integrations:**

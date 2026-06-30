@@ -5,9 +5,7 @@ Shared inference engine for Med-V²QA.
 
 Loads the MUMC VQA model once at startup and exposes:
 
-* ONNX Runtime sessions for ``visual_encoder`` and ``text_encoder``
-  (primary path, when ``onnx_models/`` is present).
-* Raw PyTorch model as a transparent fallback when ONNX files are absent.
+* Raw PyTorch model for inference.
 
 The engine is instantiated once by ``api/main.py`` and injected into both
 ``GuardrailPipeline`` and ``BatchTriageService`` so the 2.2 GB checkpoint
@@ -15,7 +13,7 @@ is never loaded more than once.
 
 Public interface
 ----------------
-``engine.backend``  → "onnx" | "pytorch"
+``engine.backend``  → "pytorch"
 ``engine.model``    → loaded MUMC_VQA (always needed for decoder generate())
 ``engine.tokenizer``
 ``engine.transform``
@@ -37,10 +35,7 @@ from PIL import Image
 logger = logging.getLogger(__name__)
 
 # Paths relative to project root (one level above api/)
-_REPO_ROOT = Path(__file__).resolve().parent.parent
-_ONNX_DIR = _REPO_ROOT / "onnx_models"
-_VIS_ONNX = _ONNX_DIR / "visual_encoder.onnx"
-_TXT_ONNX = _ONNX_DIR / "text_encoder.onnx"
+
 
 
 class InferenceEngine:
@@ -71,10 +66,7 @@ class InferenceEngine:
         self.model, self.tokenizer, self.transform = load_model(self.device)
         logger.info("MUMC checkpoint loaded.")
 
-        # Always use the PyTorch (.pth) backend — no ONNX sessions.
-        self._vis_session = None
-        self._txt_session = None
-        self.backend: Literal["onnx", "pytorch"] = "pytorch"
+        self.backend: Literal["pytorch"] = "pytorch"
         logger.info("Backend: PyTorch (.pth checkpoint).")
 
     # ------------------------------------------------------------------
@@ -87,11 +79,7 @@ class InferenceEngine:
         return self.transform(image).unsqueeze(0).to(self.device)
 
     def _image_embeds(self, image_tensor: torch.Tensor) -> torch.Tensor:
-        """Run visual encoder (ONNX or PyTorch) → [1, N, 768]."""
-        if self.backend == "onnx":
-            img_np = image_tensor.cpu().numpy().astype(np.float32)
-            output = self._vis_session.run(None, {"image": img_np})
-            return torch.from_numpy(output[0]).to(self.device)
+        """Run visual encoder (PyTorch) → [1, N, 768]."""
         with torch.no_grad():
             return self.model.visual_encoder(image_tensor)
 
@@ -101,16 +89,7 @@ class InferenceEngine:
         image_atts: torch.Tensor,
         q_enc,
     ) -> torch.Tensor:
-        """Run text encoder (ONNX or PyTorch) → last_hidden_state [1, L, 768]."""
-        if self.backend == "onnx":
-            feeds = {
-                "input_ids":               q_enc.input_ids.cpu().numpy().astype(np.int64),
-                "attention_mask":          q_enc.attention_mask.cpu().numpy().astype(np.int64),
-                "encoder_hidden_states":   image_embeds.cpu().numpy().astype(np.float32),
-                "encoder_attention_mask":  image_atts.cpu().numpy().astype(np.int64),
-            }
-            output = self._txt_session.run(None, feeds)
-            return torch.from_numpy(output[0]).to(self.device)
+        """Run text encoder (PyTorch) → last_hidden_state [1, L, 768]."""
         with torch.no_grad():
             out = self.model.text_encoder(
                 q_enc.input_ids,
@@ -166,7 +145,7 @@ class InferenceEngine:
             return_tensors="pt",
         ).to(self.device)
 
-        # 3. Encode via ONNX or PyTorch
+        # 3. Encode via PyTorch
         image_embeds = self._image_embeds(image_tensor)
         image_atts = torch.ones(image_embeds.size()[:-1], dtype=torch.long).to(self.device)
         question_hidden = self._question_hidden_states(image_embeds, image_atts, q_enc)

@@ -10,14 +10,14 @@ MUMC stands for *Masked Vision and Language Pre-training with Unimodal and Multi
 
 ## Pretrained Weights
 
-The fine-tuned VQA checkpoint (epoch 31, ~2.27 GB) is hosted on Hugging Face and **cannot** be stored in this repo due to GitHub LFS limits:
+The fine-tuned VQA checkpoint (epoch 34, ~2.27 GB) is hosted on Hugging Face and **cannot** be stored in this repo due to GitHub LFS limits:
 
 🤗 **[longle0702/medical-vqa on Hugging Face](https://huggingface.co/longle0702/medical-vqa)**
 
 ```bash
 # Download with huggingface_hub
 from huggingface_hub import hf_hub_download
-hf_hub_download(repo_id="longle0702/medical-vqa", filename="med_pretrain_29_rad_31.pth", local_dir="./output/rad/")
+hf_hub_download(repo_id="longle0702/medical-vqa", filename="med_pretrain_29_rad_34.pth", local_dir="./output/rad/")
 ```
 
 The pre-training checkpoint (`pretrain/med_pretrain_29.pth`) is tracked via Git LFS in this repo.

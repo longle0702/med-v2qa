@@ -4,10 +4,9 @@
 # Build:
 #   docker build -t med-v2qa-api .
 #
-# Run (with checkpoint + ONNX models mounted at runtime):
+# Run (with checkpoint mounted at runtime):
 #   docker run -p 8000:8000 \
 #     -v $(pwd)/med_pretrain_29_rad_34.pth:/app/med_pretrain_29_rad_34.pth:ro \
-#     -v $(pwd)/onnx_models:/app/onnx_models:ro \
 #     med-v2qa-api
 #
 # The checkpoint is NOT baked into the image (2.2 GB) — mount it at runtime.

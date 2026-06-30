@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field
 
 class HealthResponse(BaseModel):
     status: Literal["ok"] = "ok"
-    backend: Literal["onnx", "pytorch"]
+    backend: Literal["pytorch"]
     device: str
 
 
@@ -57,7 +57,7 @@ class PredictResponse(BaseModel):
     )
 
     gate_detail: GateDetail = Field(default_factory=GateDetail)
-    backend: Literal["onnx", "pytorch"] = Field(
+    backend: Literal["pytorch"] = Field(
         ..., description="Inference backend used for this request."
     )
     latency_ms: Dict[str, float] = Field(
@@ -91,7 +91,7 @@ class TriageResponse(BaseModel):
 
     queue: List[TriageItem] = Field(..., description="Sorted triage queue.")
     total_images: int
-    backend: Literal["onnx", "pytorch"]
+    backend: Literal["pytorch"]
     latency_ms: float = Field(..., description="Total triage pipeline latency in ms.")
 
 

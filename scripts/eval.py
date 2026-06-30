@@ -18,7 +18,7 @@ from vqaTools.vqa import VQA
 from vqaTools.vqaEval import VQAEval
 
 # ─────────────────────────── CONFIG ───────────────────────────
-CHECKPOINT   = './output_v3/rad/med_pretrain_29_rad_31.pth'
+CHECKPOINT   = './output_v3/rad/med_pretrain_29_rad_34.pth'
 DATASET_USE  = 'rad'
 TEXT_ENCODER = 'bert-base-uncased'
 TEXT_DECODER = 'bert-base-uncased'
