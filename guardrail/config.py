@@ -11,8 +11,6 @@ from __future__ import annotations
 import os
 
 MEDICAL_SEED_TOKENS: list[str] = [
-    # Closed-ended VQA staples
-    "yes", "no",
     # Radiology findings
     "abnormal", "normal", "opacity", "consolidation", "effusion",
     "pneumonia", "cardiomegaly", "atelectasis", "edema", "infiltrate",
@@ -25,19 +23,19 @@ MEDICAL_SEED_TOKENS: list[str] = [
     "mild", "moderate", "severe", "acute", "chronic",
     "calcification", "density", "opaque", "lucent",
     # Simple / Layman Terms (What patients actually ask about)
-    "pain", "hurt", "broken", "break", "spot", "shadow", "bleed", 
-    "bleeding", "swelling", "swollen", "lump", "bump", "hole", "tear", 
+    "pain", "hurt", "broken", "break", "spot", "shadow", "bleed",
+    "bleeding", "swelling", "swollen", "lump", "bump", "hole", "tear",
     "fluid", "blood", "cough", "ache", "injury", "sick", "wrong",
     # Simple Anatomy (Basic body parts)
-    "bone", "bones", "rib", "ribs", "neck", "head", "brain", "skull", 
-    "stomach", "belly", "gut", "arm", "leg", "shoulder", "knee", "hip", 
+    "bone", "bones", "rib", "ribs", "neck", "head", "brain", "skull",
+    "stomach", "belly", "gut", "arm", "leg", "shoulder", "knee", "hip",
     "back", "throat", "joint", "muscle", "artery", "vein",
-    # Imaging Modalities & Technical Meta-words 
-    "xray", "ray", "ct", "mri", "scan", "ultrasound", "echo", "image", 
+    # Imaging Modalities & Technical Meta-words
+    "xray", "ray", "ct", "mri", "scan", "ultrasound", "echo", "image",
     "film", "view", "axial", "sagittal", "coronal", "contrast",
     # Visual Descriptors (Common in VQA answering patterns)
-    "white", "black", "grey", "gray", "dark", "bright", "clear", 
-    "blurry", "cloudy", "line", "lines", "circle", "round", "side", 
+    "white", "black", "grey", "gray", "dark", "bright", "clear",
+    "blurry", "cloudy", "line", "lines", "circle", "round", "side",
     "left", "right", "top", "bottom", "upper", "lower", "middle"
 ]
 
@@ -47,7 +45,7 @@ MEDICAL_SEED_TOKENS: list[str] = [
 #   0.05 → very permissive (almost no false rejections)
 #   0.10 → default         (good balance; rejects clearly non-medical text)
 #   0.20 → strict          (may reject short or ambiguous clinical questions)
-INTENT_THRESHOLD: float = 0.20
+INTENT_THRESHOLD: float = 0.40
 
 # ---------------------------------------------------------------------------
 # Gate 2 – CLIP Medical Image Classifier
