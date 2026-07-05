@@ -589,6 +589,7 @@ async function runVqa() {
     const d = await r.json();
     if (d.passed) {
       setAnswer('pass', d.answer);
+      playReadout(d.answer);
     } else {
       setAnswer('fail', d.refusal_message || 'This request was refused by the safety guardrail.');
     }
@@ -597,6 +598,22 @@ async function runVqa() {
     toast(e.message, true);
   } finally {
     btn.classList.remove('loading'); btn.disabled = false;
+  }
+}
+
+async function playReadout(text) {
+  try {
+    const fd = new FormData();
+    fd.append('text', text);
+    const r = await fetch(API + '/readout', { method: 'POST', body: fd });
+    if (!r.ok) throw new Error('Audio readout failed');
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.play().catch(e => console.warn('Audio auto-play prevented:', e));
+  } catch (e) {
+    console.error(e);
+    toast('Audio readout failed.', true);
   }
 }
 

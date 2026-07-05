@@ -53,7 +53,6 @@ Med V-Squared QA is an interactive clinical tool designed to streamline medical 
 
 ### Feature 3: Audio Diagnostic Readout (Voice-Out)
 
-- **Owner:** Sathwika
 - **Enhancement Value:** Completes the hands-free loop. After the model generates a text answer, this feature reads the diagnostic result out loud so the doctor never has to look away from the patient or scan.
 - **Technical Requirements:** Native Web Speech API (JavaScript) or `pyttsx3/gTTS` (Python). 100% free implementation requiring no API keys or paid subscriptions.
 - **Complexity:** Simple (0.5 - 1 day)
