@@ -371,6 +371,42 @@
       letter-spacing: .04em;
     }
     #voice-status.err { color: #ff6666; }
+
+    /* ─── Voice-out toolbar ───────────────────────────────────────── */
+    .voice-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    .voice-toolbar-label { font-size: .78rem; color: var(--text-secondary); margin-right: auto; }
+    .toggle-switch { position: relative; display: inline-block; width: 36px; height: 20px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0; cursor: pointer;
+      background: var(--bg-input); border: 1px solid var(--border-bright);
+      border-radius: 99px; transition: all .2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute; height: 14px; width: 14px; left: 2px; top: 2px;
+      background: var(--text-muted); border-radius: 50%; transition: all .2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--gradient-soft); border-color: var(--white); }
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(16px); background: var(--white); box-shadow: 0 0 6px var(--white-glow);
+    }
+    .speed-select {
+      background: var(--bg-input); color: var(--text-secondary);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 6px 10px; font-size: .78rem; font-family: 'JetBrains Mono', monospace;
+      cursor: pointer; outline: none;
+    }
+    .speed-select:hover { border-color: var(--border-bright); }
+    .icon-btn {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid var(--border-bright); background: var(--bg-input);
+      color: var(--text-secondary); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: all .2s;
+    }
+    .icon-btn svg { width: 14px; height: 14px; }
+    .icon-btn:hover:not(:disabled) { border-color: var(--white); color: var(--white); box-shadow: 0 0 12px var(--white-glow); }
+    .icon-btn:disabled { opacity: .35; cursor: not-allowed; }
+    .readout-status { font-size: .7rem; color: var(--text-muted); min-width: 60px; }
   </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
@@ -444,6 +480,27 @@
 
     <!-- Answer -->
     <div class="section-label">Response</div>
+    <div class="voice-toolbar">
+      <label class="toggle-switch" title="Automatically read the answer aloud when it arrives">
+        <input type="checkbox" id="autoplay-toggle" onchange="onAutoplayToggle(this)">
+        <span class="toggle-slider"></span>
+      </label>
+      <span class="voice-toolbar-label">Read aloud automatically</span>
+      <select id="speed-select" class="speed-select" onchange="onSpeedChange(this)" title="Playback speed">
+        <option value="0.75">0.75x</option>
+        <option value="1" selected>1x</option>
+        <option value="1.25">1.25x</option>
+        <option value="1.5">1.5x</option>
+        <option value="2">2x</option>
+      </select>
+      <button id="replay-btn" class="icon-btn" title="Play readout" onclick="toggleReadout()" disabled>
+        <svg id="replay-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+      </button>
+      <button id="stop-btn" class="icon-btn" title="Stop" onclick="stopReadout()" disabled>
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+      </button>
+      <span class="readout-status" id="readout-status"></span>
+    </div>
     <div class="answer-box" id="answer-box">
       <div class="answer-label">Model Answer</div>
       <div class="answer-text idle" id="answer-text">Submit an image and question to see the clinical answer.</div>
@@ -505,6 +562,16 @@
 const API = '';
 let vqaFile = null;
 let triageFiles = [];
+
+/* Voice-out: consent toggle, speed control, in-memory audio cache */
+let lastAnswerText = null;
+let autoplayEnabled = localStorage.getItem('medv2qa_autoplay') === 'true'; // muted by default (clinical privacy)
+let readoutRate = parseFloat(localStorage.getItem('medv2qa_rate') || '1');
+const readoutCache = new Map(); // answer text -> object URL, avoids re-hitting /readout for repeats
+let currentAudio = null;
+
+document.getElementById('autoplay-toggle').checked = autoplayEnabled;
+document.getElementById('speed-select').value = String(readoutRate);
 
 /* Tabs */
 function switchTab(name, btn) {
@@ -575,6 +642,7 @@ async function runVqa() {
   const btn = document.getElementById('vqa-btn');
   btn.classList.add('loading'); btn.disabled = true;
   setAnswer('idle', 'Processing...');
+  resetReadoutControls();
 
   const fd = new FormData();
   fd.append('image', vqaFile, vqaFile.name);
@@ -589,7 +657,9 @@ async function runVqa() {
     const d = await r.json();
     if (d.passed) {
       setAnswer('pass', d.answer);
-      playReadout(d.answer);
+      lastAnswerText = d.answer;
+      document.getElementById('replay-btn').disabled = false;
+      if (autoplayEnabled) playCurrentReadout();
     } else {
       setAnswer('fail', d.refusal_message || 'This request was refused by the safety guardrail.');
     }
@@ -601,20 +671,86 @@ async function runVqa() {
   }
 }
 
-async function playReadout(text) {
+/* Voice-out: settings handlers */
+function onAutoplayToggle(checkbox) {
+  autoplayEnabled = checkbox.checked;
+  localStorage.setItem('medv2qa_autoplay', autoplayEnabled);
+}
+
+function onSpeedChange(select) {
+  readoutRate = parseFloat(select.value);
+  localStorage.setItem('medv2qa_rate', select.value);
+  if (currentAudio) currentAudio.playbackRate = readoutRate;
+}
+
+function setReplayIcon(state) {
+  document.getElementById('replay-icon').innerHTML = state === 'pause'
+    ? '<rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/>'
+    : '<polygon points="6 3 20 12 6 21 6 3"/>';
+}
+
+function resetReadoutControls() {
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  lastAnswerText = null;
+  document.getElementById('replay-btn').disabled = true;
+  document.getElementById('stop-btn').disabled = true;
+  document.getElementById('readout-status').textContent = '';
+  setReplayIcon('play');
+}
+
+/* Fetches the MP3 for `text`, serving from the in-memory cache on repeat requests. */
+async function getReadoutUrl(text) {
+  if (readoutCache.has(text)) return readoutCache.get(text);
+  const fd = new FormData();
+  fd.append('text', text);
+  const r = await fetch(API + '/readout', { method: 'POST', body: fd });
+  if (!r.ok) throw new Error('Audio readout failed');
+  const blob = await r.blob();
+  const url = URL.createObjectURL(blob);
+  readoutCache.set(text, url);
+  return url;
+}
+
+async function playCurrentReadout() {
+  if (!lastAnswerText) return;
+  const replayBtn = document.getElementById('replay-btn');
+  const status = document.getElementById('readout-status');
   try {
-    const fd = new FormData();
-    fd.append('text', text);
-    const r = await fetch(API + '/readout', { method: 'POST', body: fd });
-    if (!r.ok) throw new Error('Audio readout failed');
-    const blob = await r.blob();
-    const url = URL.createObjectURL(blob);
-    const audio = new Audio(url);
-    audio.play().catch(e => console.warn('Audio auto-play prevented:', e));
+    replayBtn.disabled = true;
+    status.textContent = readoutCache.has(lastAnswerText) ? '' : 'Generating…';
+    const url = await getReadoutUrl(lastAnswerText);
+    status.textContent = '';
+    currentAudio = new Audio(url);
+    currentAudio.playbackRate = readoutRate;
+    currentAudio.onplay  = () => setReplayIcon('pause');
+    currentAudio.onpause = () => setReplayIcon('play');
+    currentAudio.onended = () => { setReplayIcon('play'); document.getElementById('stop-btn').disabled = true; };
+    document.getElementById('stop-btn').disabled = false;
+    await currentAudio.play();
   } catch (e) {
     console.error(e);
     toast('Audio readout failed.', true);
+    status.textContent = '';
+  } finally {
+    replayBtn.disabled = false;
   }
+}
+
+function toggleReadout() {
+  if (!lastAnswerText) return;
+  if (currentAudio && !currentAudio.paused) {
+    currentAudio.pause();
+  } else if (currentAudio && currentAudio.currentTime > 0 && !currentAudio.ended) {
+    currentAudio.play();
+  } else {
+    playCurrentReadout();
+  }
+}
+
+function stopReadout() {
+  if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+  setReplayIcon('play');
+  document.getElementById('stop-btn').disabled = true;
 }
 
 function setAnswer(state, text) {
