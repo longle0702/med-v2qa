@@ -508,11 +508,62 @@
 
     <!-- Report section -->
     <div id="report-section" style="display:none; margin-top:24px;">
-      <div class="section-label">Clinician Notes</div>
+      <div class="section-label">Report Details</div>
       <div class="card" style="margin-top:8px;">
-        <textarea id="clinician-notes" placeholder="Add any additional observations or notes before exporting..." style="width:100%;min-height:90px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-family:inherit;font-size:.88rem;resize:vertical;outline:none;"></textarea>
-        <button onclick="downloadReport()" style="margin-top:12px;padding:10px 24px;background:var(--white);color:#000;border:none;border-radius:var(--radius-sm);font-size:.88rem;font-weight:600;cursor:pointer;letter-spacing:.02em;">
-          Download PDF Report
+
+        <!-- Patient info row 1 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;">
+          <div>
+            <label style="display:block;font-size:.75rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">PATIENT NAME</label>
+            <input id="rpt-patient-name" type="text" placeholder="e.g. John Doe"
+              style="width:100%;box-sizing:border-box;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-family:inherit;font-size:.88rem;outline:none;">
+          </div>
+          <div>
+            <label style="display:block;font-size:.75rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">AGE</label>
+            <input id="rpt-patient-age" type="number" min="0" max="130" placeholder="e.g. 45"
+              style="width:100%;box-sizing:border-box;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-family:inherit;font-size:.88rem;outline:none;">
+          </div>
+          <div>
+            <label style="display:block;font-size:.75rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">SEX</label>
+            <select id="rpt-patient-sex"
+              style="width:100%;box-sizing:border-box;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-family:inherit;font-size:.88rem;outline:none;">
+              <option value="">— select —</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Patient info row 2 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div>
+            <label style="display:block;font-size:.75rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">REFERRED BY</label>
+            <input id="rpt-referred-by" type="text" placeholder="Dr. "
+              style="width:100%;box-sizing:border-box;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-family:inherit;font-size:.88rem;outline:none;">
+          </div>
+          <div>
+            <label style="display:block;font-size:.75rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">REPORTED ON</label>
+            <input id="rpt-reported-on" type="datetime-local"
+              style="width:100%;box-sizing:border-box;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-family:inherit;font-size:.88rem;outline:none;">
+          </div>
+        </div>
+
+        <!-- Doctor Notes -->
+        <label style="display:block;font-size:.75rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">DOCTOR NOTES</label>
+        <textarea id="clinician-notes" placeholder="Add clinical observations, differential diagnosis, or follow-up instructions..."
+          style="width:100%;box-sizing:border-box;min-height:90px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-family:inherit;font-size:.88rem;resize:vertical;outline:none;"></textarea>
+
+        <!-- Signature preview -->
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:flex-end;justify-content:flex-end;gap:12px;">
+          <div style="text-align:center;">
+            <div style="width:220px;border-bottom:1px solid var(--text-muted);height:32px;"></div>
+            <div style="font-size:.75rem;color:var(--text-muted);margin-top:4px;letter-spacing:.04em;">Authorised Signature &amp; Stamp</div>
+          </div>
+        </div>
+
+        <button onclick="downloadReport()" style="margin-top:16px;padding:10px 24px;background:var(--white);color:#000;border:none;border-radius:var(--radius-sm);font-size:.88rem;font-weight:600;cursor:pointer;letter-spacing:.02em;">
+          ⬇ Download PDF Report
         </button>
       </div>
     </div>
@@ -759,18 +810,42 @@ function setAnswer(state, text) {
   box.className = 'answer-box' + (state === 'pass' ? ' pass' : state === 'fail' ? ' fail' : '');
   txt.className = 'answer-text' + (state === 'idle' || !text ? ' idle' : state === 'fail' ? ' refused' : '');
   txt.textContent = text || 'Submit an image and question to see the clinical answer.';
-  document.getElementById('report-section').style.display = state === 'pass' ? 'block' : 'none';
+  const reportVisible = state === 'pass';
+  document.getElementById('report-section').style.display = reportVisible ? 'block' : 'none';
+  if (reportVisible) prefillReportDatetime();
+}
+
+// Prefill the datetime field with current local time when report section appears
+function prefillReportDatetime() {
+  const el = document.getElementById('rpt-reported-on');
+  if (el && !el.value) {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    el.value = now.toISOString().slice(0, 16);
+  }
 }
 
 async function downloadReport() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'pt', format: 'a4' });
 
-  const pageW = doc.internal.pageSize.getWidth();
+  const pageW  = doc.internal.pageSize.getWidth();
+  const pageH  = doc.internal.pageSize.getHeight();
   const margin = 48;
   const contentW = pageW - margin * 2;
   let y = margin;
 
+  // Collect patient metadata
+  const patientName = document.getElementById('rpt-patient-name').value.trim() || '—';
+  const patientAge  = document.getElementById('rpt-patient-age').value.trim()  || '—';
+  const patientSex  = document.getElementById('rpt-patient-sex').value         || '—';
+  const referredBy  = document.getElementById('rpt-referred-by').value.trim()  || '—';
+  const reportedOn  = (() => {
+    const v = document.getElementById('rpt-reported-on').value;
+    return v ? new Date(v).toLocaleString() : new Date().toLocaleString();
+  })();
+
+  // ── Header bar ────────────────────────────────────────────────────────────
   doc.setFillColor(20, 20, 20);
   doc.rect(0, 0, pageW, 60, 'F');
   doc.setTextColor(255, 255, 255);
@@ -780,10 +855,38 @@ async function downloadReport() {
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(160, 160, 160);
-  doc.text(new Date().toLocaleString(), pageW - margin, 38, { align: 'right' });
+  doc.text('Reported on: ' + reportedOn, pageW - margin, 38, { align: 'right' });
 
   y = 80;
 
+  // ── Patient info table ────────────────────────────────────────────────────
+  const colW = contentW / 4;
+  const infoPairs = [
+    ['PATIENT NAME', patientName],
+    ['AGE',          patientAge],
+    ['SEX',          patientSex],
+    ['REF. BY',      referredBy],
+  ];
+  infoPairs.forEach(([label, value], i) => {
+    const x = margin + i * colW;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.setTextColor(140, 140, 140);
+    doc.text(label, x, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(20, 20, 20);
+    doc.text(value, x, y + 13);
+  });
+  y += 32;
+
+  // ── Divider ───────────────────────────────────────────────────────────────
+  doc.setDrawColor(200, 200, 200);
+  doc.setLineWidth(0.5);
+  doc.line(margin, y, pageW - margin, y);
+  y += 14;
+
+  // ── Scan image ────────────────────────────────────────────────────────────
   if (vqaFile) {
     const imgData = await new Promise(resolve => {
       const reader = new FileReader();
@@ -791,68 +894,108 @@ async function downloadReport() {
       reader.readAsDataURL(vqaFile);
     });
     const imgProps = doc.getImageProperties(imgData);
-    const imgH = (imgProps.height / imgProps.width) * contentW;
-    const maxH = 200;
+    const imgH  = (imgProps.height / imgProps.width) * contentW;
+    const maxH  = 180;
     const drawH = Math.min(imgH, maxH);
     const drawW = (drawH / imgH) * contentW;
     doc.addImage(imgData, imgProps.fileType || 'JPEG', margin, y, drawW, drawH);
-    y += drawH + 16;
+    y += drawH + 14;
   }
 
-  doc.setDrawColor(60, 60, 60);
-  doc.setLineWidth(0.5);
+  doc.setDrawColor(200, 200, 200);
   doc.line(margin, y, pageW - margin, y);
-  y += 16;
-
-  doc.setTextColor(140, 140, 140);
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'bold');
-  doc.text('CLINICAL QUESTION', margin, y);
   y += 14;
-  doc.setTextColor(30, 30, 30);
-  doc.setFontSize(11);
+
+  // ── Clinical Question ─────────────────────────────────────────────────────
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.setTextColor(100, 100, 100);
+  doc.text('CLINICAL QUESTION', margin, y);
+  y += 13;
   doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.setTextColor(20, 20, 20);
   const question = document.getElementById('vqa-question').value.trim();
   const qLines = doc.splitTextToSize(question, contentW);
   doc.text(qLines, margin, y);
-  y += qLines.length * 14 + 16;
+  y += qLines.length * 14 + 14;
 
   doc.line(margin, y, pageW - margin, y);
-  y += 16;
-
-  doc.setTextColor(140, 140, 140);
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'bold');
-  doc.text('MODEL ANSWER', margin, y);
   y += 14;
-  doc.setTextColor(30, 30, 30);
-  doc.setFontSize(13);
-  doc.setFont('helvetica', 'bold');
-  const answer = document.getElementById('answer-text').textContent;
-  doc.text(answer, margin, y);
-  y += 24;
 
+  // ── Model Answer ──────────────────────────────────────────────────────────
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.setTextColor(100, 100, 100);
+  doc.text('MODEL ANSWER', margin, y);
+  y += 13;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.setTextColor(20, 20, 20);
+  const answer = document.getElementById('answer-text').textContent;
+  const aLines = doc.splitTextToSize(answer, contentW);
+  doc.text(aLines, margin, y);
+  y += aLines.length * 14 + 14;
+
+  doc.line(margin, y, pageW - margin, y);
+  y += 14;
+
+  // ── Doctor Notes ──────────────────────────────────────────────────────────
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.setTextColor(100, 100, 100);
+  doc.text('DOCTOR NOTES', margin, y);
+  y += 13;
   const notes = document.getElementById('clinician-notes').value.trim();
   if (notes) {
-    doc.line(margin, y, pageW - margin, y);
-    y += 16;
-    doc.setTextColor(140, 140, 140);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.text('CLINICIAN NOTES', margin, y);
-    y += 14;
-    doc.setTextColor(30, 30, 30);
-    doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(20, 20, 20);
     const nLines = doc.splitTextToSize(notes, contentW);
     doc.text(nLines, margin, y);
+    y += nLines.length * 14 + 14;
+  } else {
+    // Empty ruled lines as placeholder
+    for (let i = 0; i < 3; i++) {
+      y += 18;
+      doc.setDrawColor(200, 200, 200);
+      doc.line(margin, y, pageW - margin, y);
+    }
+    y += 14;
   }
 
-  doc.setFontSize(8);
-  doc.setTextColor(180, 180, 180);
-  doc.text('Generated by Med-V²QA · For research use only · Not a substitute for clinical judgement', pageW / 2, doc.internal.pageSize.getHeight() - 24, { align: 'center' });
+  // ── Signature block ───────────────────────────────────────────────────────
+  // Push to near bottom of page if space allows
+  const sigY = Math.max(y + 20, pageH - 130);
 
-  const filename = 'MedV2QA_Report_' + new Date().toISOString().slice(0,10) + '.pdf';
+  doc.setDrawColor(180, 180, 180);
+  doc.line(margin, sigY, pageW - margin, sigY);  // top rule
+
+  // Left: date line
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(100, 100, 100);
+  doc.text('Date:', margin, sigY + 14);
+  doc.line(margin + 28, sigY + 16, margin + 140, sigY + 16);
+
+  // Right: signature box
+  const sigBoxX = pageW - margin - 180;
+  doc.rect(sigBoxX, sigY + 4, 180, 50);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7.5);
+  doc.setTextColor(140, 140, 140);
+  doc.text('AUTHORISED SIGNATURE & STAMP', sigBoxX + 90, sigY + 62, { align: 'center' });
+
+  // ── Footer ────────────────────────────────────────────────────────────────
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7.5);
+  doc.setTextColor(190, 190, 190);
+  doc.text(
+    'Generated by Med-V\u00B2QA \u00B7 For research use only \u00B7 Not a substitute for clinical judgement',
+    pageW / 2, pageH - 18, { align: 'center' }
+  );
+
+  const filename = 'MedV2QA_Report_' + new Date().toISOString().slice(0, 10) + '.pdf';
   doc.save(filename);
 }
 
