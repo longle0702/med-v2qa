@@ -1,0 +1,36 @@
+[Unit]
+Description=Med-V²QA — Clinical VQA Inference API
+Documentation=https://github.com/longle0702/med-v2qa
+After=network.target
+
+[Service]
+Type=simple
+User=long
+Group=long
+
+WorkingDirectory=/mnt/Data/Long-Data/myProjects/med-v2qa
+
+# Launch via the startup script (handles conda env activation)
+ExecStart=/mnt/Data/Long-Data/myProjects/med-v2qa/scripts/start_server.sh
+
+# Restart policy — always restart on crash, but give the model 90 s to load
+Restart=always
+RestartSec=10
+
+# Model loading takes ~60 s; allow 120 s before systemd declares startup failure
+TimeoutStartSec=120
+
+# Allow enough time for model to shut down cleanly
+TimeoutStopSec=30
+
+# Environment
+Environment="PYTHONUNBUFFERED=1"
+Environment="PYTHONDONTWRITEBYTECODE=1"
+
+# Logging — journalctl -u medv2qa -f
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=medv2qa
+
+[Install]
+WantedBy=multi-user.target

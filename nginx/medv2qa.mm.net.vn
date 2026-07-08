@@ -1,0 +1,58 @@
+# ─────────────────────────────────────────────────────────────
+#  Nginx config — Med-V²QA  (medv2qa.mm.net.vn)
+#  FastAPI app runs on 127.0.0.1:8765 via systemd service
+# ─────────────────────────────────────────────────────────────
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name medv2qa.mm.net.vn;
+
+    # ── SSL ─────────────────────────────────────────────────
+    ssl_certificate     /home/mm/ssl/mycert.pem;
+    ssl_certificate_key /home/mm/ssl/mycert.key;
+
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 10m;
+
+    # ── Upload limits (medical images + audio can be large) ─
+    client_max_body_size 200M;
+
+    # ── Timeouts (model inference can take several seconds) ──
+    proxy_read_timeout    300s;
+    proxy_connect_timeout 10s;
+    proxy_send_timeout    300s;
+
+    # ── Proxy to FastAPI ─────────────────────────────────────
+    location / {
+        proxy_pass http://127.0.0.1:8765;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host  $host;
+
+        # WebSocket support (for future streaming / SSE)
+        proxy_set_header Upgrade    $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_cache_bypass $http_upgrade;
+
+        # Disable buffering for streaming responses (audio readout)
+        proxy_buffering off;
+    }
+}
+
+# ── HTTP → HTTPS redirect ────────────────────────────────────
+server {
+    listen 80;
+    listen [::]:80;
+    server_name medv2qa.mm.net.vn;
+    return 301 https://$host$request_uri;
+}

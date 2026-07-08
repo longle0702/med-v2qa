@@ -1,17 +1,3 @@
-# ──────────────────────────────────────────────────────────────────────────────
-# Med-V²QA API  —  Dockerfile
-#
-# Build:
-#   docker build -t med-v2qa-api .
-#
-# Run (with checkpoint mounted at runtime):
-#   docker run -p 8000:8000 \
-#     -v $(pwd)/med_pretrain_29_rad_34.pth:/app/med_pretrain_29_rad_34.pth:ro \
-#     med-v2qa-api
-#
-# The checkpoint is NOT baked into the image (2.2 GB) — mount it at runtime.
-# ──────────────────────────────────────────────────────────────────────────────
-
 FROM python:3.10-slim
 
 # System-level dependencies for OpenCV, Pillow, scientific libs, and audio decoding

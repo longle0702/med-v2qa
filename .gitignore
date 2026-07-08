@@ -9,6 +9,7 @@ __pycache__/
 dist/
 build/
 .eggs/
+.cache/
 
 # Environment variables - NEVER commit
 .env
@@ -48,3 +49,23 @@ results/
 # Data
 data_RAD/
 data_test/
+
+# Runtime uploads (if API saves incoming files)
+uploads/
+tmp/
+
+# Logs
+*.log
+logs/
+
+# Hugging Face / Whisper model cache
+.cache/
+~/.cache/huggingface/
+
+# PDF reports (generated artifacts, not source)
+*.pdf
+
+# Secrets / config overrides
+secrets.yaml
+secrets.json
+config.local.*
