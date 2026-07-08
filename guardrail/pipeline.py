@@ -73,8 +73,7 @@ class GuardrailPipeline:
         HuggingFace model name for the BERT decoder.
         Defaults to ``config.TEXT_DECODER``.
     intent_threshold:
-        Minimum cumulative seed-token probability for Gate 1 to pass.
-        Gate 1 uses the same MUMC .pth model — no extra weights needed.
+        Minimum zero-shot probability for the label 'medical question'.
         Defaults to ``config.INTENT_THRESHOLD``.
     confidence_threshold:
         Minimum Softmax top-1 probability to pass Gate 2.
