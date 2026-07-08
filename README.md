@@ -1,6 +1,6 @@
 # Med-V²QA: Clinical Inference Engine
 
-This project provides a Visual Question Answering (VQA) inference engine for medical imaging. It builds upon the **MUMC** architecture ([MICCAI 2023](https://conferences.miccai.org/2023/en/)) and extends it with a comprehensive API, clinical safety guardrails, batch triage, and local voice transcription.
+This project provides a robust, production-ready Visual Question Answering (VQA) inference engine for medical imaging. It builds upon the **MUMC** architecture ([MICCAI 2023](https://conferences.miccai.org/2023/en/)) and extends it with a comprehensive API, clinical safety guardrails, batch triage, audio readout, multilingual support, and PDF report generation.
 
 > **Architecture credit:** [MUMC by Pengfei Li et al.](https://github.com/pengfeiliHEU/MUMC), inspired by ALBEF.
 
@@ -10,11 +10,17 @@ This project provides a Visual Question Answering (VQA) inference engine for med
 - **Dual-Gate Guardrail System:** Ensures clinical safety and system focus:
   - *Gate 1 (Intent):* Rejects non-medical or conversational questions (e.g., "tell me a joke").
   - *Gate 2 (Confidence):* Rejects non-medical images (e.g., selfies, pets) using a local CLIP classifier.
-- **Batch Triage:** Upload multiple scans (e.g., 20 chest X-rays) to automatically sort and prioritise the most abnormal scans first.
-- **Voice-to-Text Clinical Queries:** Built-in `openai/whisper-base.en` transcription runs locally to turn spoken questions into text without API keys.
-- **Audio Diagnostic Readout (Voice-Out):** Integrated text-to-speech utilizing `gTTS` to read diagnostic results out loud, ensuring a hands-free workflow.
-- **One-Click Clinical Report Generation:** Automatically generate professional PDF reports directly from the web interface for EMR integration.
-- **Clinical Web UI:** A bundled frontend (`frontend/index.html`) offering an interactive chat interface, triage queue, voice recording, and report export.
+- **Batch Triage:** Upload multiple scans (e.g., up to 20 images) to automatically sort and prioritise the most abnormal scans first using zero-shot CLIP.
+- **Voice I/O & Accessibility:** 
+  - **Speech-to-Text:** Built-in `openai/whisper-base.en` transcription runs locally to turn spoken questions into text.
+  - **Text-to-Speech:** Integrated audio readout of answers using `gTTS` with adjustable playback speed.
+- **Advanced Clinical Web UI:** A bundled, single-page frontend (`frontend/index.html`) offering:
+  - **Multilingual Support:** English (EN), French (FR), and Vietnamese (VI) interfaces.
+  - **PDF Reports:** Generate and download structured clinical reports with patient data, notes, and the VQA results.
+  - **Interactive Interface:** Drag-and-drop for images and triage batches, voice recording toggles.
+- **Production Deployment:**
+  - **FastAPI** backend for high-performance async request handling.
+  - **Nginx & Systemd:** Production-ready configuration for reverse proxying and auto-starting the service.
 - **Single-Load Architecture:** The 2.2GB MUMC checkpoint is loaded exactly once into a shared `InferenceEngine` singleton used across all API services.
 
 ---
