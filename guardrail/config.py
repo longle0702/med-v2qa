@@ -40,6 +40,13 @@ CONFIDENCE_THRESHOLD: float = CLIP_THRESHOLD
 TRIAGE_YES_THRESHOLD: float = CLIP_THRESHOLD
 
 # ---------------------------------------------------------------------------
+# Gate 3 – Model Answer Confidence
+# ---------------------------------------------------------------------------
+
+# Minimum confidence score for the generated answer.
+ANSWER_CONFIDENCE_THRESHOLD: float = 0.70
+
+# ---------------------------------------------------------------------------
 # VQA Model paths (mirrors inference.py — kept here so guardrail/ is
 # self-contained and does not hard-code paths in multiple places)
 # ---------------------------------------------------------------------------

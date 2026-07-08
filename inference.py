@@ -90,10 +90,14 @@ def predict(model, tokenizer, transform, image_path, question_str,
             num_beams=num_beams,
             eos_token_id=tokenizer.sep_token_id,
             pad_token_id=tokenizer.pad_token_id,
+            return_dict_in_generate=True,
+            output_scores=True,
         )
 
-    answer = tokenizer.decode(outputs[0][1:], skip_special_tokens=True).strip()
-    return answer
+    confidence = torch.exp(outputs.sequences_scores[0]).item()
+
+    answer = tokenizer.decode(outputs.sequences[0][1:], skip_special_tokens=True).strip()
+    return answer, confidence
 
 
 def main():
@@ -118,7 +122,7 @@ def main():
     print(f'Loading model on {device}...')
     model, tokenizer, transform = load_model(device)
 
-    answer = predict(
+    answer, confidence = predict(
         model, tokenizer, transform,
         image_path=args.image,
         question_str=args.question,
@@ -128,6 +132,7 @@ def main():
     )
     print(f'Question : {args.question}')
     print(f'Answer   : {answer}')
+    print(f'Confidence: {confidence:.4f}')
 
 
 if __name__ == '__main__':

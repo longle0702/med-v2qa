@@ -14,7 +14,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
-    from guardrail.result_types import ConfidenceResult, GuardrailResult, IntentResult
+    from guardrail.result_types import AnswerConfidenceResult, ConfidenceResult, GuardrailResult, IntentResult
 
 # ---------------------------------------------------------------------------
 # Refusal message catalogue
@@ -31,6 +31,10 @@ REFUSAL_MESSAGES: dict[str, str] = {
         "The uploaded image does not appear to be a recognisable medical scan. "
         "Please upload an appropriate clinical image and try again."
     ),
+    "answer_confidence": (
+        "I am not confident enough to provide a definitive answer for this question "
+        "based on the provided image."
+    ),
 }
 
 
@@ -42,6 +46,7 @@ def build_refusal(
     gate: str,
     intent_result: Optional["IntentResult"] = None,
     confidence_result: Optional["ConfidenceResult"] = None,
+    answer_confidence_result: Optional["AnswerConfidenceResult"] = None,
 ) -> "GuardrailResult":
     """
     Construct a ``GuardrailResult`` representing a refused request.
@@ -74,4 +79,5 @@ def build_refusal(
         gate_triggered=gate,  # type: ignore[arg-type]
         intent_result=intent_result,
         confidence_result=confidence_result,
+        answer_confidence_result=answer_confidence_result,
     )
