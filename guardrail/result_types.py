@@ -68,10 +68,35 @@ class ConfidenceResult:
 
 
 # ---------------------------------------------------------------------------
+# Gate 3 – Model Answer Confidence
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class AnswerConfidenceResult:
+    """Result from Gate 3 (Model Answer Confidence)."""
+
+    passed: bool
+    """True when the model's answer confidence exceeds the configured threshold."""
+
+    confidence: float
+    """Confidence score of the generated answer (0-1)."""
+
+    threshold: float
+    """The threshold value that was applied."""
+
+    def __str__(self) -> str:
+        status = "PASS" if self.passed else "FAIL"
+        return (
+            f"[Gate-3 {status}] confidence={self.confidence:.4f} "
+            f"threshold={self.threshold:.4f}"
+        )
+
+
+# ---------------------------------------------------------------------------
 # Full pipeline result
 # ---------------------------------------------------------------------------
 
-GateName = Literal["intent", "confidence", "none"]
+GateName = Literal["intent", "confidence", "answer_confidence", "none"]
 
 
 @dataclass(frozen=True)
@@ -102,6 +127,9 @@ class GuardrailResult:
 
     confidence_result: Optional[ConfidenceResult] = None
     """Detailed Gate-2 result (populated when Gate 1 passed)."""
+
+    answer_confidence_result: Optional[AnswerConfidenceResult] = None
+    """Detailed Gate-3 result (populated when Gate 1 and Gate 2 passed)."""
 
     metadata: Dict[str, Any] = field(default_factory=dict)
     """Arbitrary extra information (e.g. inference timing, device)."""

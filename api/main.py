@@ -251,6 +251,19 @@ async def predict(
             confidence_threshold=cr.threshold,
             confidence_passed=cr.passed,
         )
+    if result.answer_confidence_result:
+        acr = result.answer_confidence_result
+        gate_detail = GateDetail(
+            intent_label=gate_detail.intent_label,
+            intent_score=gate_detail.intent_score,
+            intent_passed=gate_detail.intent_passed,
+            confidence_prob=gate_detail.confidence_prob,
+            confidence_threshold=gate_detail.confidence_threshold,
+            confidence_passed=gate_detail.confidence_passed,
+            answer_confidence=round(acr.confidence, 4),
+            answer_confidence_threshold=acr.threshold,
+            answer_confidence_passed=acr.passed,
+        )
 
     # Timing from guardrail metadata (falls back to total if not available)
     timing = result.metadata if result.metadata else {"total_ms": round(total_ms, 1)}

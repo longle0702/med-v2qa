@@ -43,7 +43,7 @@ from guardrail import config as cfg
 from guardrail.confidence_gate import ConfidenceGate
 from guardrail.intent_classifier import MedicalIntentClassifier
 from guardrail.refusal import build_refusal
-from guardrail.result_types import GuardrailResult
+from guardrail.result_types import GuardrailResult, AnswerConfidenceResult
 
 
 
@@ -95,6 +95,7 @@ class GuardrailPipeline:
         text_decoder: str = cfg.TEXT_DECODER,
         intent_threshold: float = cfg.INTENT_THRESHOLD,
         confidence_threshold: float = cfg.CONFIDENCE_THRESHOLD,
+        answer_confidence_threshold: float = cfg.ANSWER_CONFIDENCE_THRESHOLD,
         device: Optional[str] = None,
         lazy: bool = True,
         # ── Model injection (API server passes pre-loaded components) ──
@@ -109,6 +110,7 @@ class GuardrailPipeline:
         self.text_decoder = text_decoder
         self.intent_threshold = intent_threshold
         self.confidence_threshold = confidence_threshold
+        self.answer_confidence_threshold = answer_confidence_threshold
 
         # Device resolution
         if preloaded_device is not None:
@@ -252,7 +254,7 @@ class GuardrailPipeline:
         # ── Full VQA inference ───────────────────────────────────────
         logger.info("Both gates passed → running VQA inference …")
         t3 = time.perf_counter()
-        answer = predict(
+        answer, confidence = predict(
             model=self._model,
             tokenizer=self._tokenizer,
             transform=self._transform,
@@ -263,6 +265,25 @@ class GuardrailPipeline:
             max_new_tokens=max_new_tokens,
         )
         t3_ms = (time.perf_counter() - t3) * 1000
+
+        # ── Gate 3: answer confidence ────────────────────────────────
+        logger.info("Gate 3: checking answer confidence …")
+        answer_confidence_result = AnswerConfidenceResult(
+            passed=confidence >= self.answer_confidence_threshold,
+            confidence=confidence,
+            threshold=self.answer_confidence_threshold,
+        )
+        logger.info("%s  (%.0f ms)", answer_confidence_result, t3_ms)
+
+        if not answer_confidence_result.passed:
+            logger.info("Gate 3 FAILED → returning answer confidence refusal.")
+            return build_refusal(
+                gate="answer_confidence",
+                intent_result=intent_result,
+                confidence_result=confidence_result,
+                answer_confidence_result=answer_confidence_result,
+            )
+
         total_ms = (time.perf_counter() - t_start) * 1000
         logger.info(
             "VQA inference complete (%.0f ms).  Total pipeline: %.0f ms",
@@ -277,6 +298,7 @@ class GuardrailPipeline:
             gate_triggered="none",
             intent_result=intent_result,
             confidence_result=confidence_result,
+            answer_confidence_result=answer_confidence_result,
             metadata={
                 "gate1_ms": round(t1_ms, 1),
                 "gate2_ms": round(t2_ms, 1),

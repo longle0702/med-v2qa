@@ -37,6 +37,11 @@ class GateDetail(BaseModel):
     confidence_threshold: Optional[float] = None
     confidence_passed: Optional[bool] = None
 
+    # Gate 3
+    answer_confidence: Optional[float] = None
+    answer_confidence_threshold: Optional[float] = None
+    answer_confidence_passed: Optional[bool] = None
+
 
 class PredictResponse(BaseModel):
     """
@@ -46,8 +51,8 @@ class PredictResponse(BaseModel):
     When ``passed=False`` the ``refusal_message`` explains which gate fired.
     """
 
-    passed: bool = Field(..., description="True when both guardrail gates passed.")
-    gate_triggered: Literal["intent", "confidence", "none"] = Field(
+    passed: bool = Field(..., description="True when all guardrail gates passed.")
+    gate_triggered: Literal["intent", "confidence", "answer_confidence", "none"] = Field(
         ..., description="Which gate fired; 'none' on success."
     )
 
