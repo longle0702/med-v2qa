@@ -1,5 +1,7 @@
 # Med-V²QA: Clinical Inference Engine
 
+**Live Demo:** [https://medv2qa.mm.net.vn/](https://medv2qa.mm.net.vn/)
+
 This project provides a robust, production-ready Visual Question Answering (VQA) inference engine for medical imaging. It builds upon the **MUMC** architecture ([MICCAI 2023](https://conferences.miccai.org/2023/en/)) and extends it with a comprehensive API, clinical safety guardrails, batch triage, audio readout, multilingual support, and PDF report generation.
 
 > **Architecture credit:** [MUMC by Pengfei Li et al.](https://github.com/pengfeiliHEU/MUMC), inspired by ALBEF.

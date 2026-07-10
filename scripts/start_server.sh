@@ -10,7 +10,7 @@ CONDA_ENV="medv2qa"
 APP_DIR="/mnt/Data/Long-Data/myProjects/med-v2qa"
 HOST="127.0.0.1"
 PORT="8765"
-WORKERS=1   # single worker — model is held in a global singleton
+WORKERS=1  
 
 # Activate conda env
 source "${CONDA_BASE}/etc/profile.d/conda.sh"
