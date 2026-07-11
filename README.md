@@ -1,4 +1,4 @@
-# Med-V²QA: Clinical Inference Engine
+# Med-V²QA: Medical Visual & Voice Question Answering
 
 **Live Demo:** [https://medv2qa.mm.net.vn/](https://medv2qa.mm.net.vn/)
 
@@ -87,24 +87,6 @@ The repository includes configuration for a production Linux environment (e.g., 
 3. Copy the Nginx config: `sudo cp nginx/medv2qa.mm.net.vn /etc/nginx/sites-available/`
 4. Enable the site: `sudo ln -s /etc/nginx/sites-available/medv2qa.mm.net.vn /etc/nginx/sites-enabled/`
 5. Reload Nginx: `sudo systemctl reload nginx`
-
----
-
-## Training & Evaluation (Original MUMC Pipeline)
-
-The original training and evaluation scripts have been preserved and enhanced with semantic scoring (Gemini).
-
-```bash
-# Fine-tune on VQA-RAD (requires pretrain weights in ./pretrain/med_pretrain_29.pth)
-python train_vqa.py --dataset_use rad --checkpoint ./pretrain/med_pretrain_29.pth --output_dir ./output/rad
-
-# Evaluate standard metrics
-python eval.py
-
-# Semantic evaluation (requires GEMINI_API_KEY in .env)
-cp .env.example .env  # fill in GEMINI_API_KEY
-python semantic_eval.py
-```
 
 ---
 
